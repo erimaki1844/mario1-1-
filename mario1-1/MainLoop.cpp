@@ -1,5 +1,6 @@
 #include "DxLib.h"
-#include"SceneManager.h"
+#include"Scene/SceneManager.h"
+
 
 
 // ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·

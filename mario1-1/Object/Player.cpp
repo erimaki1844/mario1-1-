@@ -1,5 +1,5 @@
 #include"Player.h"
-#include"InputControl.h"
+#include"../Utility/InputControl.h"
 #include<cmath>
 
 #define MAX_SPEED 3.0f
@@ -162,6 +162,12 @@ void Player::Draw(float diff)
 		}
 	}
 
+	//チビマリオからスーパーマリオになる時の処理
+	if (player_type == POWER_UP)
+	{
+		DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
+	}
+
 	DrawFormatString(0, 0, 0xFFFFFF, "%d", now_anim);
 	DrawFormatString(0, 20, 0xFFFFFF, "%f", speed);
 	DrawFormatString(0, 40, 0xFFFFFF, "%f", jump_power);
@@ -179,9 +185,12 @@ void Player::Movement()
 	//左移動処理
 	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT) && now_anim != E_JUMP)
 	{
+		//ブレーキ処理
 		if (direction == E_RIGHT && speed > 0.0f)
 		{
 			ChangeAnim(E_BRAKE);
+			speed -= MAX_SPEED / 25;
+			move += Vector2D(speed, 0.0f);
 			//location.x += speed;
 		}
 		else
@@ -211,9 +220,12 @@ void Player::Movement()
 	//右移動処理
 	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT) && now_anim != E_JUMP)
 	{
+		//ブレーキ処理
 		if (direction == E_LEFT && speed > 0.0f)
 		{
 			ChangeAnim(E_BRAKE);
+			speed -= MAX_SPEED / 25;
+			move += Vector2D(-speed, 0.0f);
 			//location.x -= speed;
 		}
 		else
@@ -243,12 +255,11 @@ void Player::Movement()
 	}
 
 	//慣性
-	if (move == 0.0f || now_anim != E_JUMP) {
+	if (move == 0.0f && now_anim != E_JUMP && now_anim != E_BRAKE) {
 		if (speed > 0.0f)
 		{
-			speed -= MAX_SPEED / 25;
-			if (direction == E_LEFT)move += Vector2D(-speed, 0.0f);
-			if (direction == E_RIGHT)move += Vector2D(speed, 0.0f);
+			ChangeAnim(E_RUN);
+			speed -= MAX_SPEED / 50;
 		}
 		else
 		{
@@ -288,6 +299,9 @@ void Player::Movement()
 	}
 
 	move.y -= jump_power;
+
+	if (direction == E_LEFT)move += Vector2D(-speed, 0.0f);
+	if (direction == E_RIGHT)move += Vector2D(speed, 0.0f);
 
 	location += move;
 }
@@ -364,46 +378,24 @@ void Player::OnHit(ObjectBase* obj)
 				overlap.y = -blocking.y;
 			}
 		}
-
-		/*if (diff_location.x != 0 || diff_location.y != 0)
-		{
-			if (diff_location.y > 0 && jump_power > 0)
-			{
-				overlap.y = blocking.y;
-				jump_power -= 5.0f;
-				return;
-			}
-			if (diff_location.y < 0 && jump_power < 0)
-			{
-				ChangeAnim(E_IDOL);
-				overlap.y = -blocking.y;
-				return;
-			}
-			if (diff_location.x > 0)
-			{
-				overlap.x = blocking.x;
-				return;
-			}
-			if (diff_location.x < 0)
-			{
-				overlap.x = -blocking.x;
-				return;
-			}
-		}*/
 	}
 	//ITEMの場合
-	/*if (obj->GetObjectType() == E_ITEM)
+	if (obj->GetObjectType() == E_ITEM)
 	{
-		if (obj->GetItemType() == 0)
+		if (obj->GetIsActive())
 		{
-			ChangeType(SUPER);
+			if (obj->GetPreset() == 0)
+			{
+				life++;
+			}
+			if (obj->GetPreset() == 1)
+			{
+				ChangeType(POWER_UP);
+				state = false;
+				is_active = false;
+			}
 		}
-		if (obj->GetItemType() == 1)
-		{
-			life++;
-		}
-	}*/
-	//
+	}
 }
 
 //PLAYERのアニメーション
@@ -433,8 +425,18 @@ void Player::PlayerAnim()
 
 				if (flash_count > 12)
 				{
-					ChangeType(NOMAL);
-					state = true;
+					if (player_type == POWER_UP)
+					{
+						ChangeType(SUPER);
+						is_active = true;
+						state = true;
+						return;
+					}
+					else
+					{
+						ChangeType(NOMAL);
+						state = true;
+					}
 				}
 			}
 			else
@@ -474,6 +476,11 @@ void Player::ChangeType(ePlayerType type)
 		//位置ズレを直す
 		location.y += 16.0f;
 	}
+	if (player_type != SUPER && type != FLASH)
+	{
+		//位置ズレを直す
+		location.y -= 16.0f;
+	}
 
 	player_type = type;
 
@@ -488,6 +495,10 @@ void Player::ChangeType(ePlayerType type)
 		LoadDivGraph("Resource/1-1image/Mario/mario.png", 9, 9, 1, 32, 32, image);
 	}
 	if (type == FLASH)
+	{
+		LoadDivGraph("Resource/1-1image/Mario/dekamarimation.png", 3, 3, 1, 32, 64, image);
+	}
+	if (type == POWER_UP)
 	{
 		LoadDivGraph("Resource/1-1image/Mario/dekamarimation.png", 3, 3, 1, 32, 64, image);
 	}

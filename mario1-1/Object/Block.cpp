@@ -19,8 +19,8 @@ void Block::Initialize()
 	}
 	state = false;
 	is_active = false;
-	this->location = Vector2D(400.0f, 400.0f);
-	block_type = E_BRICK;
+	this->location = Vector2D(400.0f, 300.0f);
+	block_type = E_ITEMBLOCK;
 	this->box_size = Vector2D(16.0f,16.0f);
 	this->obj_type = E_BLOCK;
 	pos = location.y;
@@ -48,6 +48,7 @@ void Block::Update()
 		{
 			anim_flg = true;
 			state = false;
+			is_active = false;
 			location.y = pos;
 		}
 	}
@@ -57,7 +58,7 @@ void Block::Draw(float diff)
 {
 	float diff_location = this->location.x - diff;
 	//DrawBox(location.x + diff_location, location.y, location.x + box_size.x + diff_location, location.y + box_size.y, 0x555555, TRUE);
-	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[block_type],TRUE);
+	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[block_type],FALSE);
 	DrawFormatString(0, 60, 0xFFFFFF, "%f", diff);
 }
 

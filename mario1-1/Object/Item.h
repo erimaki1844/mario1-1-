@@ -30,6 +30,7 @@ public:
 	virtual void Update() override;
 	virtual void Draw(float diff) override;
 	virtual void Finalize() override;
+	virtual int GetPreset() override;
 
 private:
 	virtual void Movement() override;

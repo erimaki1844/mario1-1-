@@ -1,9 +1,9 @@
 #include"GameMainScene.h"
-#include"Player.h"
-#include"Block.h"
-#include"Enemy.h"
-#include"Item.h"
-#include"CSVHandle.h"
+#include"../Object/Player.h"
+#include"../Object//Enemy.h"
+#include"../Object/Block.h"
+#include"../Object/Item.h"
+#include"../Utility/CSVHandle.h"
 
 GameMainScene::GameMainScene()
 {
@@ -19,14 +19,18 @@ void GameMainScene::Initialize()
 {
 	obj.push_back(new Player);
 	//obj.push_back(new Enemy);
-	//obj.push_back(new Item);
+	obj.push_back(new Item);
+	obj.push_back(new Block);
+	obj.push_back(new Block);
 	obj.push_back(new Block);
 	//LoadStageCSV();
-	
+
 	for (int i = 0; i < obj.size(); i++)
 	{
 		obj[i]->Initialize();
 	}
+	obj[3]->SetLocation(Vector2D(432.0f, 300.0f));
+	obj[4]->SetLocation(Vector2D(464.0f, 300.0f));
 }
 
 eSceneType GameMainScene::Update()

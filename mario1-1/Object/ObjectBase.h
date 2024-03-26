@@ -1,6 +1,6 @@
 #pragma once
 #include"DxLib.h"
-#include"Vector2D.h"
+#include"../Utility/Vector2D.h"
 
 #define GRAVITY 0.9f
 

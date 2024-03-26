@@ -1,6 +1,6 @@
 #include"SceneManager.h"
 #include"DxLib.h"
-#include"InputControl.h"
+#include"../Utility/InputControl.h"
 #include"TitleScene.h"
 #include"LoadingScene.h"
 #include"GameMainScene.h"

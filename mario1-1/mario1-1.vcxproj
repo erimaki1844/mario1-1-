@@ -139,12 +139,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Block.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="GameMainScene.cpp" />
-    <ClCompile Include="InputControl.cpp" />
-    <ClCompile Include="Item.cpp" />
-    <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="MainLoop.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\dxlib</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\dxlib</AdditionalIncludeDirectories>
@@ -155,24 +149,30 @@
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="Object\Block.cpp" />
+    <ClCompile Include="Object\Enemy.cpp" />
+    <ClCompile Include="Object\Item.cpp" />
+    <ClCompile Include="Object\Player.cpp" />
+    <ClCompile Include="Scene\GameMainScene.cpp" />
+    <ClCompile Include="Scene\LoadingScene.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="Utility\InputControl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Block.h" />
-    <ClInclude Include="CSVHandle.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="GameMainScene.h" />
-    <ClInclude Include="InputControl.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="LoadingScene.h" />
-    <ClInclude Include="ObjectBase.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="SceneBase.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="TitleScene.h" />
-    <ClInclude Include="Vector2D.h" />
+    <ClInclude Include="Object\Block.h" />
+    <ClInclude Include="Object\Enemy.h" />
+    <ClInclude Include="Object\Item.h" />
+    <ClInclude Include="Object\ObjectBase.h" />
+    <ClInclude Include="Object\Player.h" />
+    <ClInclude Include="Scene\GameMainScene.h" />
+    <ClInclude Include="Scene\LoadingScene.h" />
+    <ClInclude Include="Scene\SceneBase.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Utility\CSVHandle.h" />
+    <ClInclude Include="Utility\InputControl.h" />
+    <ClInclude Include="Utility\Vector2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

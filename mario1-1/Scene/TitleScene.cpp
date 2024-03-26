@@ -1,5 +1,5 @@
 #include"TitleScene.h"
-#include"InputControl.h"
+#include"../Utility/InputControl.h"
 #include"DxLib.h"
 
 TitleScene::TitleScene() : menu_cursor(0)

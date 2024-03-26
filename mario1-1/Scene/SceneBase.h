@@ -1,6 +1,6 @@
 #pragma once
 #include"DxLib.h"
-#include"ObjectBase.h"
+#include"../Object/ObjectBase.h"
 #include<vector>
 
 //ƒV[ƒ“î•ñ
