@@ -3,6 +3,7 @@
 #include"../Object//Enemy.h"
 #include"../Object/Block.h"
 #include"../Object/Item.h"
+#include"../Object/Pole.h"
 #include"../Utility/CSVHandle.h"
 
 GameMainScene::GameMainScene()
@@ -20,6 +21,8 @@ void GameMainScene::Initialize()
 	obj.push_back(new Player);
 	//obj.push_back(new Enemy);
 	obj.push_back(new Item);
+	obj.push_back(new Pole);
+	obj.push_back(new Block);
 	obj.push_back(new Block);
 	obj.push_back(new Block);
 	obj.push_back(new Block);
@@ -29,8 +32,8 @@ void GameMainScene::Initialize()
 	{
 		obj[i]->Initialize();
 	}
-	obj[3]->SetLocation(Vector2D(432.0f, 300.0f));
-	obj[4]->SetLocation(Vector2D(464.0f, 300.0f));
+	
+	obj[4]->SetLocation(Vector2D(600.0f, 388.0f));
 }
 
 eSceneType GameMainScene::Update()
@@ -55,6 +58,7 @@ eSceneType GameMainScene::Update()
 		if (obj[0]->GetState() == false)
 		{
 			obj[0]->Update();
+			obj[2]->Update();
 			//現在のシーンタイプを返す
 			return GetNowScene();
 		}
@@ -67,10 +71,12 @@ eSceneType GameMainScene::Update()
 
 void GameMainScene::Draw() const
 {
-	for (int i = 0; i < obj.size(); i++)
+	for (int i = 1; i < obj.size(); i++)
 	{
 		obj[i]->Draw(obj[0]->GetOffSet());
 	}
+	//Playerの描画を最後に
+	obj[0]->Draw(obj[0]->GetOffSet());
 }
 
 void GameMainScene::Finalize()

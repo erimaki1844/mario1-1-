@@ -77,7 +77,7 @@ void Enemy::Update()
 	Movement();
 }
 
-void Enemy::Draw(float diff)
+void Enemy::Draw(Vector2D diff)
 {
 	if (enemy_type == E_GOOMBA)
 	{
@@ -123,12 +123,6 @@ void Enemy::ChangeAnim(eEnemyAnim anim)
 
 void Enemy::OnHit(ObjectBase* obj)
 {
-	//ENEMYがアクティブな状態か？
-	if (is_active == false)
-	{
-		return;
-	}
-
 	//PLAYERの場合
 	if (obj->GetObjectType() == E_PLAYER && obj->GetIsActive() == true)
 	{
@@ -141,14 +135,22 @@ void Enemy::OnHit(ObjectBase* obj)
 			if (obj->GetLocation().x < location.x)direction = E_LEFT;
 		}
 
+		//ENEMYがアクティブな状態か？
+		if (is_active == false)
+		{
+			return;
+		}
+
 		//マリオが敵の頭上にいるか判定する
 		if (location.y - box_size.y < obj->GetLocation().y + obj->GetSize().y && 
 			location.y > obj->GetLocation().y + obj->GetSize().y )
 		{
+			//ノコノコの時は甲羅にこもる
 			if (enemy_type == E_KOOPTROOPA)
 			{
 				ChangeAnim(E_HIT_ENEMY);
 				ChangeType(E_KOOPTROOPA_HIDE);
+				is_active = false;
 			}
 			if (enemy_type == E_GOOMBA)
 			{
@@ -161,6 +163,13 @@ void Enemy::OnHit(ObjectBase* obj)
 	//BLOCKの場合
 	if (obj->GetObjectType() == E_BLOCK)
 	{
+
+		//ENEMYがアクティブな状態か？
+		if (is_active == false)
+		{
+			return;
+		}
+
 		if (obj->GetIsActive())
 		{
 			is_active = false;

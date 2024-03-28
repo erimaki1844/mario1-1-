@@ -72,7 +72,7 @@ void Player::Update()
 	Movement();
 }
 
-void Player::Draw(float diff)
+void Player::Draw(Vector2D diff)
 {
 	//チビマリオの画像表示処理
 	if (player_type == NOMAL)
@@ -125,6 +125,10 @@ void Player::Draw(float diff)
 			{
 				DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[6], TRUE, direction);
 			}
+			if (now_anim == E_CLING)
+			{
+				DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
+			}
 		}
 	}
 
@@ -151,6 +155,10 @@ void Player::Draw(float diff)
 		{
 			DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[6], TRUE, direction);
 		}
+		if (now_anim == E_CLING)
+		{
+			DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
+		}
 	}
 
 	//点滅時の画像表示処理
@@ -171,6 +179,7 @@ void Player::Draw(float diff)
 	DrawFormatString(0, 0, 0xFFFFFF, "%d", now_anim);
 	DrawFormatString(0, 20, 0xFFFFFF, "%f", speed);
 	DrawFormatString(0, 40, 0xFFFFFF, "%f", jump_power);
+	DrawFormatString(0, 100, 0xFFFFFF, "%d", state);
 }
 
 void Player::Finalize()
@@ -348,6 +357,15 @@ void Player::OnHit(ObjectBase* obj)
 	//BLOCKの場合
 	if (obj->GetObjectType() == E_BLOCK && now_anim != E_GAMEOVER)
 	{
+		//ポールにしがみついて下がりきった時にブロックに当たったら終了
+		if (now_anim == E_CLING)
+		{
+			anim_count2 = 0;
+			location.x += 17.0f;
+			direction = E_LEFT;
+			return;
+		}
+
 		//ブロッキング処理
 		//位置情報の差分を取得
 		Vector2D diff_location = location - obj->GetLocation();
@@ -396,11 +414,39 @@ void Player::OnHit(ObjectBase* obj)
 			}
 		}
 	}
+
+	//Poleの場合
+	if (obj->GetObjectType() == E_POLE && now_anim != E_CLING)
+	{
+		state = false;
+		anim = 8;
+		now_anim = E_CLING;
+	}
 }
 
 //PLAYERのアニメーション
 void Player::PlayerAnim()
 {
+	//ポールにしがみついた時のアニメーション
+	if (now_anim == E_CLING && anim_count2 > 50)
+	{
+		if (direction == E_LEFT)
+		{
+			location += 10.0f;
+			now_anim = E_JUMP;
+			state = true;
+		}
+		else
+		{
+			location.y += 5.0f;
+			if (anim_count2 % 5 == 0)
+			{
+				if (anim == 8)anim = 7;
+				else if (anim == 7)anim = 8;
+			}
+		}
+	}
+
 	//ゲームオーバー時のアニメーション
 	if (now_anim == E_GAMEOVER)
 	{
@@ -412,13 +458,13 @@ void Player::PlayerAnim()
 		}
 	}
 	//点滅処理
-	if (anim_count2 > 5 && now_anim != E_GAMEOVER)
+	if (anim_count2 > 5 && now_anim != E_GAMEOVER && now_anim != E_CLING)
 	{
 		if (is_active == false)
 		{
 			flash_count++;
 
-			if (flash_count > 5)
+			if (flash_count > 5 || player_type == POWER_UP)
 			{
 				anim++;
 				if (anim == 3)anim = 0;

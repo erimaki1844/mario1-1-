@@ -53,7 +53,7 @@ void Item::Update()
 	Movement();
 }
 
-void Item::Draw(float diff)
+void Item::Draw(Vector2D diff)
 {
 	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
 }

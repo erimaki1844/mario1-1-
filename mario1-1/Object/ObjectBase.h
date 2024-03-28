@@ -42,7 +42,7 @@ public:
 
 	virtual void Initialize() {};
 	virtual void Update() {};
-	virtual void Draw(float diff) {};
+	virtual void Draw(Vector2D diff) {};
 	virtual void Finalize() {};
 	virtual void OnHit(ObjectBase* obj) {};
 	virtual void Movement() {};
@@ -61,9 +61,9 @@ public:
 	{
 		return box_size;
 	}
-	float GetOffSet()
+	Vector2D GetOffSet()
 	{
-		return this->location.x;
+		return this->location;
 	}
 	bool GetIsActive()
 	{

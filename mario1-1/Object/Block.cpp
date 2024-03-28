@@ -54,12 +54,12 @@ void Block::Update()
 	}
 }
 
-void Block::Draw(float diff)
+void Block::Draw(Vector2D diff)
 {
-	float diff_location = this->location.x - diff;
+	float diff_location = this->location.x - diff.x;
 	//DrawBox(location.x + diff_location, location.y, location.x + box_size.x + diff_location, location.y + box_size.y, 0x555555, TRUE);
 	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[block_type],FALSE);
-	DrawFormatString(0, 60, 0xFFFFFF, "%f", diff);
+	//DrawFormatString(0, 60, 0xFFFFFF, "%f", diff);
 }
 
 void Block::Finalize()
@@ -104,6 +104,7 @@ void Block::OnHit(ObjectBase* obj)
 	}
 	if (obj->GetObjectType() == E_PLAYER)
 	{
+		//Player‚ª‰º‘¤‚©‚ç“–‚½‚Á‚½Žž‚Ìˆ—
 		if (obj->GetLocation().y - obj->GetSize().y < location.y + box_size.y && obj->GetLocation().y - obj->GetSize().y > location.y)
 		{
 			if (state == false)

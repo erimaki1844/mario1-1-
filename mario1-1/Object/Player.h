@@ -17,7 +17,8 @@ enum ePlayerAnim
 	E_JUMP,
 	E_BRAKE,
 	E_SQUAT,
-	E_GAMEOVER
+	E_GAMEOVER,
+	E_CLING
 };
 
 class Player : public ObjectBase
@@ -41,7 +42,7 @@ public:
 
 	virtual void Initialize() override;
 	virtual void Update() override;
-	virtual void Draw(float diff) override;
+	virtual void Draw(Vector2D diff) override;
 	virtual void Finalize() override;
 	float GetOffSet();
 	virtual int GetPreset() override;
