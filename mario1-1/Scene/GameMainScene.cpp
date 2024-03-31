@@ -4,6 +4,7 @@
 #include"../Object/Block.h"
 #include"../Object/Item.h"
 #include"../Object/Pole.h"
+#include"../Object/ClayPipe.h"
 #include"../Utility/CSVHandle.h"
 
 GameMainScene::GameMainScene()
@@ -18,22 +19,27 @@ GameMainScene::~GameMainScene()
 
 void GameMainScene::Initialize()
 {
+	//今だけここで初期化している、後でLoadingSceneで初期化する
+	score = 0;
+	coin = 0;
+
 	obj.push_back(new Player);
-	//obj.push_back(new Enemy);
+	obj.push_back(new Enemy);
 	obj.push_back(new Item);
-	obj.push_back(new Pole);
+	//obj.push_back(new ClayPipe);
+	//obj.push_back(new Pole);
+	/*obj.push_back(new Block);
 	obj.push_back(new Block);
 	obj.push_back(new Block);
-	obj.push_back(new Block);
-	obj.push_back(new Block);
-	//LoadStageCSV();
+	obj.push_back(new Block);*/
+	LoadStageCSV();
 
 	for (int i = 0; i < obj.size(); i++)
 	{
 		obj[i]->Initialize();
 	}
 	
-	obj[4]->SetLocation(Vector2D(600.0f, 388.0f));
+	//obj[4]->SetLocation(Vector2D(600.0f, 388.0f));
 }
 
 eSceneType GameMainScene::Update()
@@ -63,6 +69,23 @@ eSceneType GameMainScene::Update()
 			return GetNowScene();
 		}
 		obj[i]->Update();
+	}
+
+	for (int i = 0; i < obj.size(); i++)
+	{
+		if (obj[i]->GetEndFlg())
+		{
+			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetPreset() == 2)
+			{
+				coin++;
+			}
+			else
+			{
+				score += obj[i]->Finalize();
+				delete obj[i];
+				obj.erase(obj.begin() + i);
+			}
+		}
 	}
 
 	//現在のシーンタイプを返す
@@ -125,8 +148,8 @@ void GameMainScene::LoadStageCSV()
 		{
 			if (data.cell.at(i).at(j) != 0)
 			{
-				map_chip.x = i * 32;
-				map_chip.y = j * 32;
+				map_chip.x = j * 32;
+				map_chip.y = i * 32;
 				obj.push_back(new Block);
 				obj.back()->SetLocation(map_chip);
 				obj.back()->SetType(data.cell.at(i).at(j));

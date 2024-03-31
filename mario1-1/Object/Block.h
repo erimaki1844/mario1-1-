@@ -7,7 +7,9 @@ enum eBlockType
 	E_NOMAL,
 	E_BRICK,
 	E_ITEMBLOCK,
-	E_HIDEBLOCK
+	E_HIDEBLOCK,
+	E_ITEMBRICK,
+	E_FLOORBLOCK
 };
 
 class Block : public ObjectBase
@@ -24,7 +26,7 @@ public:
 	virtual void Initialize() override;
 	virtual void Update() override;
 	virtual void Draw(Vector2D diff) override;
-	virtual void Finalize() override;
+	virtual int Finalize() override;
 	virtual void SetLocation(Vector2D location) override;
 	virtual void SetType(int handle) override;
 	bool GetState();

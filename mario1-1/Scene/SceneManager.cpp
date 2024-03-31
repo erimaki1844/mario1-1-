@@ -43,6 +43,10 @@ void SceneManager::Initialize()
 
 	//タイトルシーンから始める
 	ChangeScene(eSceneType::E_MAIN);
+
+	//UIを生成する
+	ui = new UI;
+	ui->Initialize();
 }
 
 //シーンマネージャー機能:更新処理
@@ -50,7 +54,8 @@ void SceneManager::Update()
 {
 	//フレーム開始時間（マイクロ秒）を取得
 	LONGLONG start_time = GetNowHiPerformanceCount();
-
+	int time = 400;
+	int fps = 0;
 	//メインループ
 	while (ProcessMessage() != -1)
 	{
@@ -62,15 +67,21 @@ void SceneManager::Update()
 		{
 			//フレーム開始時間を更新する
 			start_time = now_time;
+			fps++;
+
+			if (fps == 60)fps = 0, time--;
 
 			//入力機能:更新処理
 			InputControl::Update();
 
-			//描画処理
-			Draw();
+			//UIの更新処理
+			ui->Update(time,current_scene->GetScore(),current_scene->GetCoin());
 
 			//更新処理（戻り値は次のシーン情報）
 			eSceneType next = current_scene->Update();
+
+			//描画処理
+			Draw();
 
 			//エンドが選択されていたら、ゲームを終了する
 			if (next == eSceneType::END)
@@ -116,6 +127,9 @@ void SceneManager::Draw() const
 
 	//シーンの描画
 	current_scene->Draw();
+
+	//UIの描画
+	ui->Draw();
 
 	//裏画面の内容を表画面に反映
 	ScreenFlip();

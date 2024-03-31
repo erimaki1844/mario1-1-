@@ -1,21 +1,17 @@
 #pragma once
 #include"ObjectBase.h"
 
-class Pole : public ObjectBase
+class ClayPipe : public ObjectBase
 {
 private:
-	Vector2D move;  //ˆÚ“®—Ê
-
+	int length; //“yŠÇ‚Ì’·‚³
 public:
-	Pole();
-	~Pole();
+	ClayPipe();
+	~ClayPipe();
 
 	virtual void Initialize() override;
 	virtual void Update() override;
 	virtual void Draw(Vector2D diff) override;
 	virtual int Finalize() override;
-
-private:
-	virtual void Movement() override;
-	virtual void OnHit(ObjectBase* obj) override;
+	virtual void SetPreset(int preset) override;
 };

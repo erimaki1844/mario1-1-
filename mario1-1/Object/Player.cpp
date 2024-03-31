@@ -26,6 +26,7 @@ void Player::Initialize()
 	ChangeType(NOMAL);
 	is_active = true;
 	state = true;
+	end_flg = false;
 }
 
 void Player::Update()
@@ -175,16 +176,10 @@ void Player::Draw(Vector2D diff)
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
 	}
-
-	DrawFormatString(0, 0, 0xFFFFFF, "%d", now_anim);
-	DrawFormatString(0, 20, 0xFFFFFF, "%f", speed);
-	DrawFormatString(0, 40, 0xFFFFFF, "%f", jump_power);
-	DrawFormatString(0, 100, 0xFFFFFF, "%d", state);
 }
-
-void Player::Finalize()
+int Player::Finalize()
 {
-
+	return 0;
 }
 
 void Player::Movement()
@@ -277,7 +272,10 @@ void Player::Movement()
 	}
 
 	//重力
-	jump_power -= GRAVITY;
+	if (jump_power > -12.0f)
+	{
+		jump_power -= GRAVITY;
+	}
 
 	//ジャンプ処理
 	if (E_JUMP != now_anim)
@@ -330,7 +328,7 @@ void Player::OnHit(ObjectBase* obj)
 			return;
 		}
 		//マリオが敵の頭上にいるか判定する
-		if (location.y + box_size.y > obj->GetLocation().y - obj->GetSize().y && location.y + box_size.y < obj->GetLocation().y)
+		if (location.y < obj->GetLocation().y && jump_power < 0.0f)
 		{
 			//踏みつけていたら少し跳ねる
 			jump_power = 10.0f;
@@ -355,7 +353,7 @@ void Player::OnHit(ObjectBase* obj)
 		}
 	}
 	//BLOCKの場合
-	if (obj->GetObjectType() == E_BLOCK && now_anim != E_GAMEOVER)
+	if (obj->GetObjectType() == E_BLOCK && now_anim != E_GAMEOVER || obj->GetObjectType() == E_CLAYPIPE)
 	{
 		//ポールにしがみついて下がりきった時にブロックに当たったら終了
 		if (now_anim == E_CLING)
@@ -390,7 +388,7 @@ void Player::OnHit(ObjectBase* obj)
 				overlap.y = blocking.y;
 				jump_power -= 5.0f;
 			}
-			else if (diff_location.y < 0)
+			else if (diff_location.y < 0 && jump_power < 0.0f)
 			{
 				ChangeAnim(E_IDOL);
 				overlap.y = -blocking.y;
@@ -416,7 +414,7 @@ void Player::OnHit(ObjectBase* obj)
 	}
 
 	//Poleの場合
-	if (obj->GetObjectType() == E_POLE && now_anim != E_CLING)
+	if (obj->GetObjectType() == E_POLE && now_anim != E_CLING && obj->GetIsActive() != false)
 	{
 		state = false;
 		anim = 8;

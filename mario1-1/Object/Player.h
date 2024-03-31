@@ -43,7 +43,7 @@ public:
 	virtual void Initialize() override;
 	virtual void Update() override;
 	virtual void Draw(Vector2D diff) override;
-	virtual void Finalize() override;
+	virtual int Finalize() override;
 	float GetOffSet();
 	virtual int GetPreset() override;
 

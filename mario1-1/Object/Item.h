@@ -19,6 +19,7 @@ class Item : public ObjectBase
 private:
 	float g_speed;
 	float start_pos;
+	bool display_flg;
 	eItemType item_type;
 	eItemAnim now_anim;
 
@@ -29,7 +30,7 @@ public:
 	virtual void Initialize() override;
 	virtual void Update() override;
 	virtual void Draw(Vector2D diff) override;
-	virtual void Finalize() override;
+	virtual int Finalize() override;
 	virtual int GetPreset() override;
 
 private:

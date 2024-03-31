@@ -13,23 +13,38 @@ Block::~Block()
 
 void Block::Initialize()
 {
-	if (block_type == E_NONE)
-	{
-		Finalize();
-	}
+	anim = 0;
+	anim_count = 0;
 	state = false;
 	is_active = false;
-	this->location = Vector2D(400.0f, 300.0f);
-	block_type = E_ITEMBLOCK;
+	end_flg = false;
+	//this->location = Vector2D(400.0f, 300.0f);
+	//block_type = E_ITEMBLOCK;
 	this->box_size = Vector2D(16.0f,16.0f);
 	this->obj_type = E_BLOCK;
 	pos = location.y;
-	//LoadDivGraph("Resource/images/block222.png", 7, 7, 1, 30, 30, image);
-	LoadDivGraph("Resource/1-1image/Block/allblock.png", 10, 10, 1, 32, 32, image);
 }
 
 void Block::Update()
 {
+	if (block_type == E_ITEMBLOCK)
+	{
+		if (anim == 0 && anim_count > 20)
+		{
+			anim++;
+			anim_count = 0;
+		}
+		else if (anim != 0 && anim_count > 8)
+		{
+			anim++;
+			if (anim >= 4) anim = 0;
+
+			anim_count = 0;
+		}
+
+		anim_count++;
+	}
+
 	if (state == true)
 	{
 		if (pos - 10.0f < location.y && anim_flg == true)
@@ -58,13 +73,14 @@ void Block::Draw(Vector2D diff)
 {
 	float diff_location = this->location.x - diff.x;
 	//DrawBox(location.x + diff_location, location.y, location.x + box_size.x + diff_location, location.y + box_size.y, 0x555555, TRUE);
-	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[block_type],FALSE);
-	//DrawFormatString(0, 60, 0xFFFFFF, "%f", diff);
+	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim],FALSE);
+	
 }
 
-void Block::Finalize()
+int Block::Finalize()
 {
 	DeleteGraph(image[block_type]);
+	return 0;
 }
 
 void Block::SetLocation(Vector2D location)
@@ -81,15 +97,27 @@ void Block::SetType(int handle)
 		 break;
 	case 1:
 		block_type = E_NOMAL;
+		image[0] = LoadGraph("Resource/1-1image/Block/kara_block.png");
 		break;
 	case 2:
 		block_type = E_BRICK;
+		image[0] = LoadGraph("Resource/1-1image/Block/block.png");
 		break;
 	case 3:
 		block_type = E_ITEMBLOCK;
+		LoadDivGraph("Resource/1-1image/Block/hatena.png", 4, 4, 1, 32, 32, image);
 		break;
 	case 4:
 		block_type = E_HIDEBLOCK;
+		image[0] = LoadGraph("Resource/1-1image/Block/block.png");
+		break;
+	case 5:
+		block_type = E_ITEMBRICK;
+		image[0] = LoadGraph("Resource/1-1image/Block/block.png");
+		break;
+	case 6:
+		block_type = E_FLOORBLOCK;
+		image[0] = LoadGraph("Resource/1-1image/Block/floor.png");
 		break;
 	default:
 		break;
@@ -114,19 +142,21 @@ void Block::OnHit(ObjectBase* obj)
 			}
 			if (block_type == E_BRICK)
 			{
+				//マリオがスーパーマリオか確認する
 				if (obj->GetPreset() == 0)
 				{
 					DeleteGraph(image[1]);
-					block_type = E_NONE;
+					
 				}
 			}
 			if (block_type == E_ITEMBLOCK)
 			{
-				block_type = E_NOMAL;
+				
+				SetType(1);
 			}
 			if (block_type == E_HIDEBLOCK)
 			{
-				block_type = E_NOMAL;
+				SetType(1);
 			}
 		}
 	}

@@ -17,6 +17,8 @@ class SceneBase
 {
 protected:
 	std::vector<ObjectBase*> obj;
+	int score;
+	int coin;
 public:
 	SceneBase() {}
 	virtual ~SceneBase() {}
@@ -36,4 +38,15 @@ public:
 	//現在のシーン情報を取得
 	virtual eSceneType GetNowScene() const = 0;
 
+	//スコア
+	int GetScore()
+	{
+		return score;
+	}
+
+	//コイン
+	int GetCoin()
+	{
+		return coin;
+	}
 };

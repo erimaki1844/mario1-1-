@@ -1,4 +1,5 @@
 #include"Enemy.h"
+#include"../Utility/UI.h"
 #include<cmath>
 
 Enemy::Enemy() : speed(0.0f),g_speed(0.0f)
@@ -20,10 +21,11 @@ void Enemy::Initialize()
 	angle = 0.0f;
 	obj_type = E_ENEMY;
 	now_anim = E_IDOL_ENEMY;
-	ChangeType(E_KOOPTROOPA);
+	ChangeType(E_GOOMBA);
 	direction = E_RIGHT;
 	is_active = true;
-	
+	end_flg = false;
+	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
 }
 
 void Enemy::Update()
@@ -33,6 +35,11 @@ void Enemy::Update()
 	{
 		if (now_anim = E_HIT_ENEMY)
 		{
+			anim_count++;
+			if (anim_count > 50)
+			{
+				end_flg = true;
+			}
 			return;
 		}
 		//d—Í
@@ -88,6 +95,10 @@ void Enemy::Draw(Vector2D diff)
 		if (now_anim == E_HIT_ENEMY)
 		{
 			DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[2], TRUE);
+			for (int i = 0; i < 3; i++)
+			{
+				DrawRotaGraph((location.x+80.0f) - 16.0f * i, location.y-10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], FALSE);
+			}
 		}
 	}
 	if (enemy_type == E_KOOPTROOPA)
@@ -102,12 +113,14 @@ void Enemy::Draw(Vector2D diff)
 	DrawFormatString(0, 80, 0xFFFFFF, "%d", count);
 }
 
-void Enemy::Finalize()
+int Enemy::Finalize()
 {
-	for (int i=0; i > 3; i++)
+	for (int i=0; i < 15; i++)
 	{
 		DeleteGraph(image[i]);
+		DeleteGraph(num_img[i]);
 	}
+	return score;
 }
 
 int Enemy::GetPreset()
@@ -226,7 +239,7 @@ void Enemy::Movement()
 		//¶ˆÚ“®ˆ—
 		if (direction == E_LEFT)
 		{
-			move += Vector2D(2.0f + speed, 0.0f);
+			move += Vector2D(1.0f + speed, 0.0f);
 		}
 		//‰EˆÚ“®ˆ—
 		if (direction == E_RIGHT)
@@ -242,12 +255,14 @@ void Enemy::ChangeType(eEnemyType type)
 {
 	if (type == E_GOOMBA)
 	{
+		score = 100;
 		enemy_type = type;
 		box_size = Vector2D(16.0f, 16.0f);
 		LoadDivGraph("Resource/1-1image/Enemy/kuribo.png", 3, 3, 1, 32, 32, image);
 	}
 	if (type == E_KOOPTROOPA)
 	{
+		score = 200;
 		enemy_type = type;
 		box_size = Vector2D(16.0f, 32.0f);
 		LoadDivGraph("Resource/1-1image/Enemy/nokonoko.png", 2, 2, 1, 32, 64, image);

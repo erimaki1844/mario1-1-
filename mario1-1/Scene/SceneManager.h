@@ -1,5 +1,5 @@
 #pragma once
-
+#include"../Utility/UI.h"
 #include"SceneBase.h"
 
 //固定化するフレームレート値
@@ -12,7 +12,7 @@ class SceneManager
 {
 private:
 	SceneBase* current_scene;   //現在シーン情報
-
+	UI* ui;
 public:
 	SceneManager();
 	~SceneManager();

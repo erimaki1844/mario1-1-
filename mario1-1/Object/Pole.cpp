@@ -19,6 +19,7 @@ void Pole::Initialize()
 	score = 400;
 	anim_count = 0;
 	is_active = false;
+	end_flg = false;
 	obj_type = E_POLE;
 	image[0] = LoadGraph("Resource/1-1image/pole_down.png");
 	image[1] = LoadGraph("Resource/1-1image/pole.png");
@@ -53,12 +54,14 @@ void Pole::Draw(Vector2D diff)
 	}
 }
 
-void Pole::Finalize()
+int Pole::Finalize()
 {
 	for (int i = 0; i < 3; i++) 
 	{
 		DeleteGraph(image[0]);
 	}
+
+	return 0;
 }
 
 void Pole::Movement()

@@ -1,4 +1,5 @@
 #include"Item.h"
+#include"../Utility/UI.h"
 #include<cmath>
 
 Item::Item() : g_speed(0.0f)
@@ -21,11 +22,24 @@ void Item::Initialize()
 	obj_type = E_ITEM;
 	direction = E_LEFT;
 	is_active = false;
+	end_flg = false;
+	display_flg = false;
 	start_pos = location.y;
 }
 
 void Item::Update()
 {
+	if (display_flg == true)
+	{
+		anim_count++;
+		if (anim_count > 50)
+		{
+			end_flg = true;
+		}
+
+		return;
+	}
+
 	if (state == true)
 	{
 		if (item_type == E_COIN)
@@ -55,15 +69,29 @@ void Item::Update()
 
 void Item::Draw(Vector2D diff)
 {
-	DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
+	if (state == true || is_active == true)
+	{
+		DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
+	}
+	if (display_flg == true)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			DrawRotaGraph((location.x + 80.0f) - 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], FALSE);
+		}
+	}
+
 }
 
-void Item::Finalize()
+int Item::Finalize()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		DeleteGraph(image[i]);
+		DeleteGraph(num_img[i]);
 	}
+
+	return score;
 }
 
 //Item‚ÌˆÚ“®ˆ—
@@ -120,7 +148,9 @@ void Item::OnHit(ObjectBase* obj)
 	{
 		if (is_active == true)
 		{
-			Finalize();
+			anim_count = 0;
+			is_active = false;
+			display_flg = true;
 		}
 	}
 
@@ -177,14 +207,17 @@ void Item::ChangeType(eItemType type)
 {
 	if (type == E_1UP)
 	{
+		score = 0;
 		LoadDivGraph("Resource/1-1image/Item/1up_mushroom.png", 1, 1, 1, 32, 32, image);
 	}
 	if (type == E_SUPER)
 	{
+		score = 1000;
 		LoadDivGraph("Resource/1-1image/Item/mushroom.png", 1, 1, 1, 32, 32, image);
 	}
 	if (type == E_COIN)
 	{
+		score = 200;
 		LoadDivGraph("Resource/1-1image/Item/coin.png", 4, 4, 1, 32, 32, image);
 	}
 

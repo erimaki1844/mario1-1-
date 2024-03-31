@@ -26,10 +26,12 @@ protected:
 	Vector2D box_size;
 	Vector2D location;
 	int image[10];
+	int num_img[15];
 	int score;
 	float angle;
 	bool state;
 	bool is_active;
+	bool end_flg;
 	int anim_count;
 	int anim;
 	eObjectType obj_type;
@@ -43,10 +45,11 @@ public:
 	virtual void Initialize() {};
 	virtual void Update() {};
 	virtual void Draw(Vector2D diff) {};
-	virtual void Finalize() {};
+	virtual int Finalize() { return 0; };
 	virtual void OnHit(ObjectBase* obj) {};
 	virtual void Movement() {};
 	virtual int GetPreset() { return 0; };
+	virtual void SetPreset(int preset) {};
 	virtual void SetLocation(Vector2D location) {};
 	virtual void SetType(int handle) {};
 	eObjectType GetObjectType()
@@ -72,6 +75,10 @@ public:
 	bool GetState()
 	{
 		return this->state;
+	}
+	bool GetEndFlg()
+	{
+		return this->end_flg;
 	}
 	int GetScore() {};
 };
