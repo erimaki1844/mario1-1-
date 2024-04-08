@@ -215,25 +215,44 @@ void Enemy::OnHit(ObjectBase* obj)
 		blocking.x = box_ex.x - fabsf(diff_location.x);
 		blocking.y = box_ex.y - fabsf(diff_location.y);
 
-		if (fabsf(diff_location.x) > fabsf(diff_location.y))
+		if (g_speed < 0.0f || blocking.y < 1.0f)
 		{
-			if (diff_location.x > 0)overlap.x = blocking.x, direction = E_LEFT;
-			else if (diff_location.x < 0)overlap.x = -blocking.x, direction = E_RIGHT;
+			g_speed = 0.0f;
+			overlap.y = -blocking.y;
 		}
-		else
+		else if (g_speed >= 0.0f)
 		{
-			//â∫ë§Ç…Ç¢ÇÈéû
-			if (diff_location.y > 0)
+			if (diff_location.x > 0)
 			{
-				overlap.y = blocking.y;
+				overlap.x = blocking.x;
+				direction = E_LEFT;
 			}
-			//è„ë§Ç…Ç¢ÇÈéû
-			else if (diff_location.y < 0 && g_speed < 0.0f)
+			else if (diff_location.x < 0)
 			{
-				g_speed = 0.0f;
-				overlap.y = -blocking.y;
+				overlap.x = -blocking.x;
+				direction = E_RIGHT;
 			}
 		}
+
+		//if (fabsf(diff_location.x) > fabsf(diff_location.y) && g_speed >= 0.0f)
+		//{
+		//	if (diff_location.x > 0)overlap.x = blocking.x, direction = E_LEFT;
+		//	else if (diff_location.x < 0)overlap.x = -blocking.x, direction = E_RIGHT;
+		//}
+		//else
+		//{
+		//	//â∫ë§Ç…Ç¢ÇÈéû
+		//	if (diff_location.y > 0)
+		//	{
+		//		overlap.y = blocking.y;
+		//	}
+		//	//è„ë§Ç…Ç¢ÇÈéû
+		//	else if (diff_location.y < 0 && g_speed < 0.0f)
+		//	{
+		//		g_speed = 0.0f;
+		//		overlap.y = -blocking.y;
+		//	}
+		//}
 	}
 }
 

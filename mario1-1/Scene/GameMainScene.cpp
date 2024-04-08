@@ -129,9 +129,8 @@ eSceneType GameMainScene::Update()
 	//}
 
 	//end_flgがtureになっているもの終了時処理を呼ぶ
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < obj.size(); i++)
 	{
-		//if (obj[i]->GetLocation().x > 800.0f)break;
 		if (obj[i]->GetEndFlg())
 		{
 			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetPreset() == 2)
@@ -165,10 +164,8 @@ eSceneType GameMainScene::Update()
 	//当たり判定チェック
 	for (int i = 0; i < obj.size(); i++)
 	{
-		//if (obj[i]->GetLocation().x > 800.0f)break;
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < obj.size(); j++)
 		{
-			//if (obj[j]->GetLocation().x > 800.0f)break;
 			if (i != j)
 			{
 				if (IsHitCheck(obj[i], obj[j]))
@@ -224,7 +221,7 @@ void GameMainScene::Draw() const
 	DrawRotaGraph(pos.x - diff, pos.y - flag_pos, 1.0f, 0.0, siro_img[1], TRUE);
 	//DrawRotaGraph(pos.x - diff, pos.y,1.0f,0.0, siro_img[0], TRUE);
 	
-	for (int i = 1; i < 100; i++)
+	for (int i = 1; i < obj.size(); i++)
 	{
 		//if (obj[i]->GetLocation().x > 800.0f)break;
 		obj[i]->Draw();
