@@ -18,7 +18,8 @@ enum ePlayerAnim
 	E_BRAKE,
 	E_SQUAT,
 	E_GAMEOVER,
-	E_CLING
+	E_CLING,
+	E_GOAL
 };
 
 class Player : public ObjectBase
@@ -27,11 +28,10 @@ private:
 	int count;
 	int flash_count;
 	int anim_count2;
-	int life;
 	float speed;
 	float jump_power;
 	float start_pos;
-	Vector2D overlap;
+	Vector2D move;
 	ePlayerAnim now_anim;
 	ePlayerType player_type;
 	ePlayerType fall;
@@ -41,10 +41,10 @@ public:
 	~Player();
 
 	virtual void Initialize() override;
-	virtual void Update() override;
-	virtual void Draw(Vector2D diff) override;
+	virtual void Update(Vector2D diff) override;
+	virtual void Draw() override;
 	virtual int Finalize() override;
-	float GetOffSet();
+	virtual Vector2D GetOffSet() override;
 	virtual int GetPreset() override;
 
 private:

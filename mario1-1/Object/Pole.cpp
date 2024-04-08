@@ -13,7 +13,6 @@ Pole::~Pole()
 void Pole::Initialize()
 {
 
-	location = Vector2D(600.0f, 356.0f);
 	box_size = Vector2D(1.0f, 240.0f);
 	move = Vector2D(0.0f);
 	score = 400;
@@ -26,21 +25,28 @@ void Pole::Initialize()
 	image[2] = LoadGraph("Resource/1-1image/flag.png");
 }
 
-void Pole::Update()
+void Pole::Update(Vector2D diff)
 {
+	//Player‚Æ‚ÌƒYƒŒ‚ð‰ÁŽZ‚·‚é
+	location.x -= diff.x;
+
+	//‰æ–Ê“à‚É“ü‚Á‚Ä‚©‚ç“®‚­‚æ‚¤‚É‚·‚é
+	if (location.x > 800.0f)
+	{
+		return;
+	}
+
 	if (is_active == true)
 	{
 		anim_count++;
 
 		if (anim_count > 50 && location.y - 223.0f < location.y - move.y)Movement();
+		else end_flg = true;
 	}
 }
 
-void Pole::Draw(Vector2D diff)
+void Pole::Draw()
 {
-	//Player‚Æ‚ÌƒYƒŒ
-	float diff_location = this->location.y - diff.y;
-
 	//Pole‚Ì’·‚³‚Í256
 	for (int i = 0; i < 8; i++)
 	{

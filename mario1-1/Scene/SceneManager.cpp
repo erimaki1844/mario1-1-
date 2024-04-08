@@ -4,6 +4,7 @@
 #include"TitleScene.h"
 #include"LoadingScene.h"
 #include"GameMainScene.h"
+#include"EndScene.h"
 
 SceneManager::SceneManager() : current_scene(nullptr)
 {
@@ -27,7 +28,7 @@ void SceneManager::Initialize()
 		throw("ウィンドウモードで起動できませんでした\n");
 	}
 	//横16　縦14
-	SetGraphMode(780, 420, 32);
+	SetGraphMode(640, 480, 32);
 
 	//DXライブラリの初期化
 	if (DxLib_Init() == -1)
@@ -54,8 +55,7 @@ void SceneManager::Update()
 {
 	//フレーム開始時間（マイクロ秒）を取得
 	LONGLONG start_time = GetNowHiPerformanceCount();
-	int time = 400;
-	int fps = 0;
+	
 	//メインループ
 	while (ProcessMessage() != -1)
 	{
@@ -67,15 +67,12 @@ void SceneManager::Update()
 		{
 			//フレーム開始時間を更新する
 			start_time = now_time;
-			fps++;
-
-			if (fps == 60)fps = 0, time--;
 
 			//入力機能:更新処理
 			InputControl::Update();
 
 			//UIの更新処理
-			ui->Update(time,current_scene->GetScore(),current_scene->GetCoin());
+			ui->Update(current_scene->GetTime(), current_scene->GetScore(), current_scene->GetCoin());
 
 			//更新処理（戻り値は次のシーン情報）
 			eSceneType next = current_scene->Update();
@@ -173,6 +170,8 @@ SceneBase* SceneManager::CreateScene(eSceneType scene_type)
 		return new LoadingScene;
 	case eSceneType::E_MAIN:
 		return new GameMainScene;
+	case eSceneType::E_END:
+		return new EndScene;
 	default:
 		return nullptr;
 	}

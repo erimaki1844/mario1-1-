@@ -72,6 +72,12 @@
     <ClCompile Include="Utility\UI.cpp">
       <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\EndScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Bakuha.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Block.h">
@@ -121,6 +127,12 @@
     </ClInclude>
     <ClInclude Include="Utility\UI.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\EndScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Bakuha.h">
+      <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

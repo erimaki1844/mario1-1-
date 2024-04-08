@@ -1,17 +1,16 @@
 #pragma once
+#pragma once
 #include "SceneBase.h"
 
-class LoadingScene :public SceneBase
+class EndScene :public SceneBase
 {
 private:
 	int count;
 	int life;
-	int image[10];
-	int num_img[15];
 
 public:
-	LoadingScene();
-	virtual ~LoadingScene();
+	EndScene();
+	~EndScene();
 
 	virtual void Initialize() override;
 	virtual eSceneType Update() override;

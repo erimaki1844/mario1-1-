@@ -1,17 +1,18 @@
 #pragma once
 #include"ObjectBase.h"
 
-class ClayPipe : public ObjectBase
+class Bakuha : public ObjectBase
 {
 private:
-	int length; //“yŠÇ‚Ì’·‚³
+	int bakuha_type;
+
 public:
-	ClayPipe();
-	~ClayPipe();
+	Bakuha();
+	~Bakuha();
 
 	virtual void Initialize() override;
 	virtual void Update(Vector2D diff) override;
 	virtual void Draw() override;
 	virtual int Finalize() override;
-	virtual void SetPreset(int preset) override;
+	virtual void SetType(int handle) override;
 };

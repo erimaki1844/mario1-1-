@@ -15,7 +15,7 @@ TitleScene::~TitleScene()
 //‰Šú‰»ˆ—
 void TitleScene::Initialize()
 {
-	
+	menu_image = LoadGraph("Resource/1-1image/title.png");
 }
 
 //XVˆ—
@@ -60,7 +60,7 @@ eSceneType TitleScene::Update()
 //•`‰æˆ—
 void TitleScene::Draw() const
 {
-	DrawString(0, 0, "TitleScene", 0xFFFFFF);
+	DrawGraph(0, 0, menu_image, FALSE);
 	DrawFormatString(0, 20, 0xFFFFFF,"%d", menu_cursor);
 }
 

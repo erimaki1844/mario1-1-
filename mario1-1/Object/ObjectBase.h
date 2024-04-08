@@ -11,7 +11,8 @@ enum eObjectType
 	E_BLOCK,
 	E_ITEM,
 	E_POLE,
-	E_CLAYPIPE
+	E_CLAYPIPE,
+	E_BAKUHA
 };
 
 enum eDirection
@@ -26,6 +27,7 @@ protected:
 	Vector2D box_size;
 	Vector2D location;
 	int image[10];
+	int se[10];
 	int num_img[15];
 	int score;
 	float angle;
@@ -34,6 +36,7 @@ protected:
 	bool end_flg;
 	int anim_count;
 	int anim;
+	Vector2D overlap;
 	eObjectType obj_type;
 	eObjectType hit_type{};
 	eDirection direction;
@@ -43,14 +46,17 @@ public:
 	~ObjectBase() {};
 
 	virtual void Initialize() {};
-	virtual void Update() {};
-	virtual void Draw(Vector2D diff) {};
+	virtual void Update(Vector2D diff) {};
+	virtual void Draw() {};
 	virtual int Finalize() { return 0; };
 	virtual void OnHit(ObjectBase* obj) {};
 	virtual void Movement() {};
 	virtual int GetPreset() { return 0; };
 	virtual void SetPreset(int preset) {};
-	virtual void SetLocation(Vector2D location) {};
+	void SetLocation(Vector2D location) 
+	{
+		this->location = location;
+	};
 	virtual void SetType(int handle) {};
 	eObjectType GetObjectType()
 	{ 
@@ -64,9 +70,9 @@ public:
 	{
 		return box_size;
 	}
-	Vector2D GetOffSet()
+	virtual Vector2D GetOffSet()
 	{
-		return this->location;
+		return 0;
 	}
 	bool GetIsActive()
 	{
@@ -80,5 +86,8 @@ public:
 	{
 		return this->end_flg;
 	}
-	int GetScore() {};
+	int GetScore()
+	{
+		return this->score;
+	}
 };

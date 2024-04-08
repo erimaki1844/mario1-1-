@@ -14,26 +14,44 @@ Enemy::~Enemy()
 
 void Enemy::Initialize()
 {
-	location = Vector2D(400.0f, 250.f);
 	anim = 0;
 	anim_count = 0;
 	count = 0;
 	angle = 0.0f;
 	obj_type = E_ENEMY;
 	now_anim = E_IDOL_ENEMY;
-	ChangeType(E_GOOMBA);
 	direction = E_RIGHT;
 	is_active = true;
 	end_flg = false;
+
 	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
 }
 
-void Enemy::Update()
+void Enemy::Update(Vector2D diff)
 {
+	//Playerとのズレを加算する
+	location.x -= diff.x;
+
+	//画面内に入ってから動くようにする
+	if (location.x > 680.0f)
+	{
+		return;
+	}
+
+	// めり込み分ずらす
+	location += overlap;
+	overlap = Vector2D(0.0f);
+
+	//画面外に完全に出た終了する
+	if (location.x < -64.0f)
+	{
+		end_flg = true;
+	}
+
 	//アクティブな状態じゃなかったらENEMYの終了アニメーションをする
 	if (is_active == false)
 	{
-		if (now_anim = E_HIT_ENEMY)
+		if (now_anim == E_HIT_ENEMY && enemy_type == E_GOOMBA)
 		{
 			anim_count++;
 			if (anim_count > 50)
@@ -43,16 +61,16 @@ void Enemy::Update()
 			return;
 		}
 		//重力
-		g_speed += GRAVITY;
+		if (g_speed > -12.0f)
+		{
+			//重力
+			g_speed -= GRAVITY;
+		}
 		location.y += g_speed;
 		return;
 	}
 
-	//重力
-	g_speed += GRAVITY;
-	location.y += g_speed;
-
-	//走っている時のアニメーション
+	//ノコノコが甲羅にこもっている時のアニメーション
 	if (enemy_type == E_KOOPTROOPA_HIDE)
 	{
 		count++;
@@ -84,7 +102,7 @@ void Enemy::Update()
 	Movement();
 }
 
-void Enemy::Draw(Vector2D diff)
+void Enemy::Draw()
 {
 	if (enemy_type == E_GOOMBA)
 	{
@@ -97,7 +115,7 @@ void Enemy::Draw(Vector2D diff)
 			DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[2], TRUE);
 			for (int i = 0; i < 3; i++)
 			{
-				DrawRotaGraph((location.x+80.0f) - 16.0f * i, location.y-10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], FALSE);
+				DrawRotaGraph((location.x + 80.0f) - 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], TRUE);
 			}
 		}
 	}
@@ -121,12 +139,6 @@ int Enemy::Finalize()
 		DeleteGraph(num_img[i]);
 	}
 	return score;
-}
-
-int Enemy::GetPreset()
-{
-	int i = enemy_type;
-	return i;
 }
 
 void Enemy::ChangeAnim(eEnemyAnim anim)
@@ -163,7 +175,7 @@ void Enemy::OnHit(ObjectBase* obj)
 			{
 				ChangeAnim(E_HIT_ENEMY);
 				ChangeType(E_KOOPTROOPA_HIDE);
-				is_active = false;
+				anim = 0;
 			}
 			if (enemy_type == E_GOOMBA)
 			{
@@ -173,8 +185,8 @@ void Enemy::OnHit(ObjectBase* obj)
 		}
 	}
 
-	//BLOCKの場合
-	if (obj->GetObjectType() == E_BLOCK)
+	//BLOCKとPipeの場合
+	if (obj->GetObjectType() == E_BLOCK || obj->GetObjectType() == E_CLAYPIPE)
 	{
 
 		//ENEMYがアクティブな状態か？
@@ -199,31 +211,27 @@ void Enemy::OnHit(ObjectBase* obj)
 		Vector2D box_ex = box_size + obj->GetSize();
 
 		//どれだけ重なっているか？
-		Vector2D overlap = box_ex.x - fabsf(diff_location.x);
-		overlap.y = box_ex.y - fabsf(diff_location.y);
+		Vector2D blocking;
+		blocking.x = box_ex.x - fabsf(diff_location.x);
+		blocking.y = box_ex.y - fabsf(diff_location.y);
 
-		if (diff_location.x != 0 || diff_location.y != 0)
+		if (fabsf(diff_location.x) > fabsf(diff_location.y))
 		{
-			//上へと押し出す
-			if (diff_location.y < 0 )
+			if (diff_location.x > 0)overlap.x = blocking.x, direction = E_LEFT;
+			else if (diff_location.x < 0)overlap.x = -blocking.x, direction = E_RIGHT;
+		}
+		else
+		{
+			//下側にいる時
+			if (diff_location.y > 0)
 			{
-				g_speed = 0;
-				location.y -= overlap.y;
-				return;
+				overlap.y = blocking.y;
 			}
-			//右へと押し出す
-			if (diff_location.x > 0)
+			//上側にいる時
+			else if (diff_location.y < 0 && g_speed < 0.0f)
 			{
-				direction = E_LEFT;
-				location.x += overlap.x;
-				return;
-			}
-			//左へと押し出す
-			if (diff_location.x < 0)
-			{
-				direction = E_RIGHT;
-				location.x -= overlap.x;
-				return;
+				g_speed = 0.0f;
+				overlap.y = -blocking.y;
 			}
 		}
 	}
@@ -244,9 +252,18 @@ void Enemy::Movement()
 		//右移動処理
 		if (direction == E_RIGHT)
 		{
-			move += Vector2D(-2.0f - speed, 0.0f);
+			move += Vector2D(-1.0f - speed, 0.0f);
 		}
 	}
+
+
+	//重力
+	if (g_speed > -12.0f)
+	{
+		//重力
+		g_speed -= GRAVITY;
+	}
+	move.y -= g_speed;
 
 	location += move;
 }
@@ -273,4 +290,37 @@ void Enemy::ChangeType(eEnemyType type)
 		box_size = Vector2D(16.0f, 16.0f);
 		LoadDivGraph("Resource/1-1image/Enemy/nokonoko_revival.png", 2, 2, 1, 32, 32, image);
 	}
+}
+
+//生成するエネミーのタイプを設定する
+void Enemy::SetType(int handle)
+{
+	switch (handle)
+	{case 0:
+		score = 100;
+		enemy_type = E_GOOMBA;
+		box_size = Vector2D(16.0f, 16.0f);
+		LoadDivGraph("Resource/1-1image/Enemy/kuribo.png", 3, 3, 1, 32, 32, image);
+		break;
+	case 1:
+		score = 200;
+		enemy_type = E_KOOPTROOPA;
+		box_size = Vector2D(16.0f, 32.0f);
+		LoadDivGraph("Resource/1-1image/Enemy/nokonoko.png", 2, 2, 1, 32, 64, image);
+		break;
+	case 2:
+		enemy_type = E_KOOPTROOPA_HIDE;
+		box_size = Vector2D(16.0f, 16.0f);
+		LoadDivGraph("Resource/1-1image/Enemy/nokonoko_revival.png", 2, 2, 1, 32, 32, image);
+		break;
+	default:
+		break;
+	}
+}
+
+//Enemyのタイプを取得する
+int Enemy::GetPreset()
+{
+	int type = enemy_type;
+	return type;
 }

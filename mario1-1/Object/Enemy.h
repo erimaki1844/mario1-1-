@@ -28,11 +28,12 @@ public:
 	~Enemy();
 
 	virtual void Initialize() override;
-	virtual void Update() override;
-	virtual void Draw(Vector2D diff) override;
+	virtual void Update(Vector2D diff) override;
+	virtual void Draw() override;
 	virtual int Finalize() override;
 	virtual int GetPreset() override;
-	bool GetState();
+	virtual void SetType(int handle) override;
+
 private:
 	virtual void OnHit(ObjectBase* obj) override;
 	virtual void Movement() override;

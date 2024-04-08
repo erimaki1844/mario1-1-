@@ -139,6 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Object\Bakuha.cpp" />
+    <ClCompile Include="Scene\EndScene.cpp" />
     <ClCompile Include="Object\ClayPipe.cpp" />
     <ClCompile Include="MainLoop.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\dxlib</AdditionalIncludeDirectories>
@@ -163,6 +165,8 @@
     <ClCompile Include="Utility\InputControl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Bakuha.h" />
+    <ClInclude Include="Scene\EndScene.h" />
     <ClInclude Include="Object\ClayPipe.h" />
     <ClInclude Include="Object\Block.h" />
     <ClInclude Include="Object\Enemy.h" />

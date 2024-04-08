@@ -16,19 +16,45 @@ void Item::Initialize()
 {
 	anim = 0;
 	anim_count=0;
-	location = Vector2D(400.0f, 300.0f);
 	box_size = Vector2D(16.0f, 16.0f);
-	ChangeType(E_SUPER);
 	obj_type = E_ITEM;
 	direction = E_LEFT;
 	is_active = false;
 	end_flg = false;
 	display_flg = false;
 	start_pos = location.y;
+
+	//画像の読み込み
+	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
+
+	//SEの読み込み
+	se[0] = LoadSoundMem("Resource/sound/SE_ItemAppearance.wav");
+	se[1] = LoadSoundMem("Resource/sound/SE_1Up.wav");
+	se[2] = LoadSoundMem("Resource/sound/SE_CoinPickUp.wav");
+
+	for (int i = 0; i < 2; i++)
+	{
+		ChangeVolumeSoundMem(100, this->se[i]);
+	}
 }
 
-void Item::Update()
+void Item::Update(Vector2D diff)
 {
+	//Playerとのズレを加算する
+	location.x -= diff.x;
+
+	//画面内に入ってから動くようにする
+	if (location.x > 800.0f)
+	{
+		return;
+	}
+
+	//画面外に完全に出た終了する
+	if (location.x < -64.0f)
+	{
+		end_flg = true;
+	}
+
 	if (display_flg == true)
 	{
 		anim_count++;
@@ -42,13 +68,8 @@ void Item::Update()
 
 	if (state == true)
 	{
-		if (item_type == E_COIN)
-		{
-			g_speed = 10.0f;
-			is_active = true;
-			state = false;
-		}
-		else if (location.y + 32.0f > start_pos)
+	
+		if (location.y + 32.0f > start_pos)
 		{
 			location.y -= 1.0f;
 		}
@@ -62,12 +83,14 @@ void Item::Update()
 	if (anim_count / 5 >= 1 && anim_count % 5 == 0)
 	{
 		anim++;
+
+		if (anim == 4)anim = 0;
 	}
 
 	Movement();
 }
 
-void Item::Draw(Vector2D diff)
+void Item::Draw()
 {
 	if (state == true || is_active == true)
 	{
@@ -77,10 +100,9 @@ void Item::Draw(Vector2D diff)
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			DrawRotaGraph((location.x + 80.0f) - 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], FALSE);
+			DrawRotaGraph((location.x + 80.0f) - 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], TRUE);
 		}
 	}
-
 }
 
 int Item::Finalize()
@@ -99,12 +121,34 @@ void Item::Movement()
 {
 	Vector2D move = Vector2D(0.0f);
 
-	if (is_active == true && item_type != E_COIN)
+	//落下処理
+	if (is_active == true && item_type == E_COIN)
 	{
-		//重力
-		g_speed -= GRAVITY;
-		location.y -= g_speed;
+		if (g_speed > -5.0f)
+		{
+			//重力
+			g_speed -= GRAVITY / 5;
+		}
+		else
+		{
+			is_active = false;
+			display_flg = true;
+			anim_count = 0;
+		}
+
+		anim_count++;
+
 	}
+	else if (is_active == true)
+	{
+		if (g_speed > -12.0f)
+		{
+			//重力
+			g_speed -= GRAVITY;
+		}
+	}
+
+	move.y -= g_speed;
 
 	if (is_active == true)
 	{
@@ -120,24 +164,10 @@ void Item::Movement()
 			{
 				move += Vector2D(-2.0f, 0.0f);
 			}
-
-			location += move;
 		}
-		if (item_type == E_COIN)
-		{
-			if (anim_count < 20)
-			{
-				//重力
-				g_speed -= GRAVITY / 5;
-				location.y -= g_speed;
-			}
-			else
-			{
-				Finalize();
-			}
 
-			anim_count++;
-		}
+		location += move;
+
 	}
 }
 
@@ -157,12 +187,23 @@ void Item::OnHit(ObjectBase* obj)
 	//BLOCKの場合
 	if (obj->GetObjectType() == E_BLOCK)
 	{
+		//Playerがブロックに下側から当たったらアイテムが出てくる
 		if (obj->GetIsActive() && is_active != true)
 		{
-			state = true;
+			if (item_type == E_COIN)
+			{
+				g_speed = 10.0f;
+				is_active = true;
+				PlaySoundMem(se[2], DX_PLAYTYPE_BACK, TRUE);
+			}
+			else
+			{
+				state = true;
+				PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);
+			}
 		}
 
-		if (obj->GetIsActive() && is_active == true)
+		if (obj->GetIsActive() && is_active == true && item_type != E_COIN)
 		{
 			direction = E_RIGHT;
 			location.x -= 20.0f;
@@ -170,7 +211,7 @@ void Item::OnHit(ObjectBase* obj)
 		}
 
 		//このアイテムがアクティブな状態か？
-		if (is_active == false)return;
+		if (is_active == false || item_type == E_COIN)return;
 
 		//ブロッキング処理
 		//位置情報の差分を取得
@@ -186,42 +227,49 @@ void Item::OnHit(ObjectBase* obj)
 
 		if (fabsf(diff_location.x) > fabsf(diff_location.y))
 		{
-			if (diff_location.x > 0)location.x = blocking.x;
-			else if (diff_location.x < 0)location.x = -blocking.x;
+			if (diff_location.x > 0)location.x += blocking.x;
+			else if (diff_location.x < 0)location.x += -blocking.x;
 		}
 		else
 		{
-			if (diff_location.y < 0)
+			if (diff_location.y > 0)
 			{
 				if (item_type != E_COIN)
 				{
-					g_speed = 0.0f;
-					location.y -= blocking.y;
+					location.y += blocking.y;
 				}
+			}
+			else if (diff_location.y < 0 && g_speed < 0.0f)
+			{
+				g_speed = 0.0f;
+				location.y += -blocking.y;
 			}
 		}
 	}
 }
 
-void Item::ChangeType(eItemType type)
+void Item::SetType(int handle)
 {
-	if (type == E_1UP)
+	switch (handle)
 	{
+	case 0:
 		score = 0;
+		item_type = E_1UP;
 		LoadDivGraph("Resource/1-1image/Item/1up_mushroom.png", 1, 1, 1, 32, 32, image);
-	}
-	if (type == E_SUPER)
-	{
+		break;
+	case 1:
 		score = 1000;
+		item_type = E_SUPER;
 		LoadDivGraph("Resource/1-1image/Item/mushroom.png", 1, 1, 1, 32, 32, image);
-	}
-	if (type == E_COIN)
-	{
+		break;
+	case 2:
 		score = 200;
+		item_type = E_COIN;
 		LoadDivGraph("Resource/1-1image/Item/coin.png", 4, 4, 1, 32, 32, image);
+		break;
+	default:
+		break;
 	}
-
-	item_type = type;
 }
 
 int Item::GetPreset()

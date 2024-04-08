@@ -4,7 +4,7 @@
 
 #define MAX_SPEED 3.0f
 
-Player::Player() : jump_power(0.0f), speed(0.0f), count(0), life(3), start_pos(0.0f), flash_count(0), anim_count2(0),overlap(0.0f)
+Player::Player() : jump_power(0.0f), speed(0.0f), count(0),start_pos(0.0f), flash_count(0), anim_count2(0)
 {
 
 }
@@ -18,19 +18,43 @@ void Player::Initialize()
 {
 	ChangeAnim(E_IDOL);
 	direction = E_RIGHT;
-	this->location = Vector2D(500.0f, 300.0f);
+	this->location = Vector2D(30.0f, 100.0f);
+	overlap = Vector2D(0.0f);
 	this->angle = 0.0f;
 	anim = 1;
 	anim_count = 0;
 	this->obj_type = E_PLAYER;
-	ChangeType(NOMAL);
+	ChangeType(SUPER);
 	is_active = true;
 	state = true;
 	end_flg = false;
+
+	//SEの読み込み
+	se[0] = LoadSoundMem("Resource/sound/SE_Death.wav");
+	se[1] = LoadSoundMem("Resource/sound/SE_Degeneration.wav");
+	se[2] = LoadSoundMem("Resource/sound/SE_MiniJump.wav");
+	se[3] = LoadSoundMem("Resource/sound/SE_SuperJump.wav");
+	se[4] = LoadSoundMem("Resource/sound/SE_PowerUp.wav");
+	se[5] = LoadSoundMem("Resource/sound/SE_StepOn.wav");
+	se[6] = LoadSoundMem("Resource/sound/SE_Touch.wav");
+	se[7] = LoadSoundMem("Resource/sound/SE_Kick.wav");
+	se[8] = LoadSoundMem("Resource/sound/SE_PoleTouch.wav");
+	se[9] = LoadSoundMem("Resource/sound/SE_Goal.wav");
+
+	for (int i = 0; i < 10; i++) 
+	{
+		ChangeVolumeSoundMem(100, this->se[i]);
+	}
 }
 
-void Player::Update()
+void Player::Update(Vector2D diff)
 {
+	//画面外にいたらゲームオーバー扱いとする
+	if (location.y > 500.0f)
+	{
+		end_flg = true;
+		return;
+	}
 
 	// めり込み分ずらす
 	location += overlap;
@@ -38,19 +62,11 @@ void Player::Update()
 
 	PlayerAnim();
 
-	// マリオのサイズ変更中
+	// マリオのアニメーション中
 	if (state == false)
 	{
 		speed = 0.0f;
 		return;
-	}
-
-	//Debug用処理
-	if (location.y >= 405)
-	{
-		location.y = 405;
-		jump_power = 0;
-		ChangeAnim(E_IDOL);
 	}
 
 	//しゃがみ処理
@@ -73,7 +89,7 @@ void Player::Update()
 	Movement();
 }
 
-void Player::Draw(Vector2D diff)
+void Player::Draw()
 {
 	//チビマリオの画像表示処理
 	if (player_type == NOMAL)
@@ -86,7 +102,7 @@ void Player::Draw(Vector2D diff)
 				{
 					DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[0], TRUE, direction);
 				}
-				if (now_anim == E_RUN)
+				if (now_anim == E_RUN || now_anim == E_GOAL)
 				{
 					DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
 				}
@@ -144,7 +160,7 @@ void Player::Draw(Vector2D diff)
 		{
 			DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[1], TRUE, direction);
 		}
-		if (now_anim == E_RUN)
+		if (now_anim == E_RUN || now_anim == E_GOAL)
 		{
 			DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim + 1], TRUE, direction);
 		}
@@ -177,14 +193,20 @@ void Player::Draw(Vector2D diff)
 		DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
 	}
 }
+
 int Player::Finalize()
 {
+	for (int i = 0; i < 10; i++)
+	{
+		DeleteGraph(image[i]);
+	}
+
 	return 0;
 }
 
 void Player::Movement()
 {
-	Vector2D move = Vector2D(0.0f);
+	move = Vector2D(0.0f);
 
 	//左移動処理
 	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT) && now_anim != E_JUMP)
@@ -193,7 +215,7 @@ void Player::Movement()
 		if (direction == E_RIGHT && speed > 0.0f)
 		{
 			ChangeAnim(E_BRAKE);
-			speed -= MAX_SPEED / 25;
+			speed -= MAX_SPEED / 20;
 			move += Vector2D(speed, 0.0f);
 			//location.x += speed;
 		}
@@ -228,7 +250,7 @@ void Player::Movement()
 		if (direction == E_LEFT && speed > 0.0f)
 		{
 			ChangeAnim(E_BRAKE);
-			speed -= MAX_SPEED / 25;
+			speed -= MAX_SPEED / 20;
 			move += Vector2D(-speed, 0.0f);
 			//location.x -= speed;
 		}
@@ -263,7 +285,7 @@ void Player::Movement()
 		if (speed > 0.0f)
 		{
 			ChangeAnim(E_RUN);
-			speed -= MAX_SPEED / 50;
+			speed -= MAX_SPEED / 25;
 		}
 		else
 		{
@@ -284,6 +306,14 @@ void Player::Movement()
 		{
 			jump_power = 10.0f;
 			ChangeAnim(E_JUMP);
+			if (speed >= MAX_SPEED)
+			{
+				PlaySoundMem(se[3], DX_PLAYTYPE_BACK, TRUE);
+			}
+			else
+			{
+				PlaySoundMem(se[2], DX_PLAYTYPE_BACK, TRUE);
+			}
 		}
 	}
 	else
@@ -311,11 +341,20 @@ void Player::Movement()
 	if (direction == E_RIGHT)move += Vector2D(speed, 0.0f);
 
 	location += move;
+
+	if (location.x - box_size.x < 0 || location.x + box_size.x > 390)
+	{
+		location.x -= move.x;
+	}
 }
 
 //ヒット時処理
 void Player::OnHit(ObjectBase* obj)
 {
+	//再生中のSEをとめる
+	StopSoundMem(se[2]);
+	StopSoundMem(se[3]);
+
 	//ENEMYの場合
 	if (obj->GetObjectType() == E_ENEMY && is_active == true)
 	{
@@ -333,12 +372,19 @@ void Player::OnHit(ObjectBase* obj)
 			//踏みつけていたら少し跳ねる
 			jump_power = 10.0f;
 			speed = 3.0f;
+			PlaySoundMem(se[5], DX_PLAYTYPE_BACK, TRUE);
 		}
 		else if (obj->GetIsActive() == true)
 		{
+			if (obj->GetPreset() == 2)
+			{
+				PlaySoundMem(se[7], DX_PLAYTYPE_BACK, TRUE);
+				return;
+			}
+			else PlaySoundMem(se[6], DX_PLAYTYPE_BACK, TRUE);
 			if (player_type == NOMAL)
 			{
-				life--;
+				anim = 0;
 				jump_power = 10.0f;
 				is_active = false;
 				state = false;
@@ -346,9 +392,11 @@ void Player::OnHit(ObjectBase* obj)
 			}
 			if (player_type == SUPER)
 			{
-				ChangeType(FLASH);
+				anim = 0;
 				is_active = false;
 				state = false;
+				ChangeType(FLASH);
+				PlaySoundMem(se[1], DX_PLAYTYPE_BACK, TRUE);
 			}
 		}
 	}
@@ -356,13 +404,15 @@ void Player::OnHit(ObjectBase* obj)
 	if (obj->GetObjectType() == E_BLOCK && now_anim != E_GAMEOVER || obj->GetObjectType() == E_CLAYPIPE)
 	{
 		//ポールにしがみついて下がりきった時にブロックに当たったら終了
-		if (now_anim == E_CLING)
+		if (now_anim == E_CLING && direction != E_LEFT)
 		{
 			anim_count2 = 0;
-			location.x += 17.0f;
+			location.x += 32.0f;
 			direction = E_LEFT;
+			StopSoundMem(se[8]);
 			return;
 		}
+		else if (now_anim == E_CLING) return;
 
 		//ブロッキング処理
 		//位置情報の差分を取得
@@ -400,15 +450,12 @@ void Player::OnHit(ObjectBase* obj)
 	{
 		if (obj->GetIsActive())
 		{
-			if (obj->GetPreset() == 0)
-			{
-				life++;
-			}
-			if (obj->GetPreset() == 1)
+			if (obj->GetPreset() == 1 && player_type != SUPER)
 			{
 				ChangeType(POWER_UP);
 				state = false;
 				is_active = false;
+				PlaySoundMem(se[4], DX_PLAYTYPE_BACK, TRUE);
 			}
 		}
 	}
@@ -416,24 +463,60 @@ void Player::OnHit(ObjectBase* obj)
 	//Poleの場合
 	if (obj->GetObjectType() == E_POLE && now_anim != E_CLING && obj->GetIsActive() != false)
 	{
+		anim_count2 = 0;
 		state = false;
 		anim = 8;
 		now_anim = E_CLING;
+		PlaySoundMem(se[8], DX_PLAYTYPE_BACK, TRUE);
 	}
 }
 
 //PLAYERのアニメーション
 void Player::PlayerAnim()
 {
+	move = Vector2D(0.0f);
+
+	//ゴールした時のアニメーション
+	if (now_anim == E_GOAL)
+	{
+		//重力
+		if (jump_power > -12.0f)
+		{
+			jump_power -= GRAVITY;
+		}
+		//着地していたら
+		if (jump_power <= 0)
+		{
+			if (anim_count > 5 - speed)
+			{
+				anim++;
+				if (anim >= 4) anim = 1;
+
+				anim_count = 0;
+			}
+
+			anim_count++;
+		}
+		move.x += 3.0f;
+		move.y -= jump_power;
+
+		location += move;
+	}
+
 	//ポールにしがみついた時のアニメーション
 	if (now_anim == E_CLING && anim_count2 > 50)
 	{
+		//降りきった後の処理
 		if (direction == E_LEFT)
 		{
-			location += 10.0f;
-			now_anim = E_JUMP;
-			state = true;
+			location.x += 10.0f;
+			jump_power = 10.0f;
+			direction = E_RIGHT;
+			anim = 5;
+			ChangeAnim(E_GOAL);
+			PlaySoundMem(se[9], DX_PLAYTYPE_BACK, TRUE);
 		}
+		//ポールにしがみついて降下している時の処理
 		else
 		{
 			location.y += 5.0f;
@@ -454,9 +537,13 @@ void Player::PlayerAnim()
 			jump_power -= GRAVITY / 2;
 			location.y -= jump_power;
 		}
+		if (anim_count2 > 25 && anim_count2 < 27)
+		{
+			PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);
+		}
 	}
 	//点滅処理
-	if (anim_count2 > 5 && now_anim != E_GAMEOVER && now_anim != E_CLING)
+	if (anim_count2 > 5 && now_anim != E_GAMEOVER && now_anim != E_CLING && now_anim != E_GOAL)
 	{
 		if (is_active == false)
 		{
@@ -502,13 +589,14 @@ void Player::PlayerAnim()
 //アニメーションの切り替え処理
 void Player::ChangeAnim(ePlayerAnim anim)
 {
+	//ジャンプして着地した時に呼ばれる想定の処理
 	if (anim == E_IDOL)
 	{
 		count = 0;
 		jump_power = 0;
 	}
 
-	if (now_anim != E_GAMEOVER)now_anim = anim;
+	if (now_anim != E_GAMEOVER && now_anim != E_GOAL)now_anim = anim;
 }
 
 //PLAYERのタイプ切り替え処理
@@ -548,9 +636,13 @@ void Player::ChangeType(ePlayerType type)
 	}
 }
 
-float Player::GetOffSet()
+Vector2D Player::GetOffSet()
 {
-	return sizeof(this->location.x);
+	if (location.x + box_size.x > 385)
+	{
+		return move;
+	}
+	else return 0;
 }
 
 int Player::GetPreset()

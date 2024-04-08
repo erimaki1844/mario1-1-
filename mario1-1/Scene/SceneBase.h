@@ -9,6 +9,7 @@ enum eSceneType
 	E_TITLE,
 	E_LOADING,
 	E_MAIN,
+	E_END,
 	END
 };
 
@@ -19,6 +20,9 @@ protected:
 	std::vector<ObjectBase*> obj;
 	int score;
 	int coin;
+	int time;
+	int life;
+
 public:
 	SceneBase() {}
 	virtual ~SceneBase() {}
@@ -48,5 +52,11 @@ public:
 	int GetCoin()
 	{
 		return coin;
+	}
+
+	//タイマー
+	int GetTime()
+	{
+		return time;
 	}
 };
