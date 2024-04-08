@@ -19,8 +19,6 @@ void Block::Initialize()
 	state = false;
 	is_active = false;
 	end_flg = false;
-	//this->location = Vector2D(400.0f, 300.0f);
-	//block_type = E_ITEMBLOCK;
 	move = Vector2D(0.0f);
 	this->box_size = Vector2D(16.0f,16.0f);
 	this->obj_type = E_BLOCK;

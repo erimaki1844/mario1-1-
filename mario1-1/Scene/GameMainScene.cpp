@@ -82,55 +82,56 @@ eSceneType GameMainScene::Update()
 	}
 
 	//ゴール処理
-	//if (obj[0]->GetLocation().x > pos.x)
-	//{
-	//	obj[0]->Finalize();
-	//	
-	//	if (time != 0)
-	//	{
-	//		score += 50;
-	//		time--;
-	//	}
-	//	else if (flag_pos < 96.0f)flag_pos += 2.0f;
+	if (obj[0]->GetLocation().x > pos.x - diff)
+	{
+		obj[0]->Finalize();
+		
+		if (time != 0)
+		{
+			score += 50;
+			time--;
+		}
+		else if (flag_pos < 96.0f)flag_pos += 2.0f;
 
-	//	if (flag_pos >= 96.0f)
-	//	{
-	//		if (bakuha_count != 0) bakuha_flg = true;
+		if (flag_pos >= 96.0f)
+		{
+			if (bakuha_count != 0) bakuha_flg = true;
 
-	//		if (bakuha_flg == true)
-	//		{
-	//			//ステージクリア後の爆発を生成する
-	//			obj.push_back(new Bakuha);
-	//			obj.back()->Initialize();
-	//			obj.back()->SetLocation(Vector2D(pos.x,pos.y - flag_pos));
-	//			obj.back()->SetType(bakuha_count);
-	//			bakuha_flg = false;
-	//			bakuha_count--;
-	//		}
-	//		else
-	//		{
-	//			if (obj.back()->GetObjectType() == E_BAKUHA)
-	//			{
-	//				obj.back()->Update(diff);
-	//			}
-	//			else return E_TITLE;
+			if (bakuha_flg == true)
+			{
+				//ステージクリア後の爆発を生成する
+				obj.push_back(new Bakuha);
+				obj.back()->Initialize();
+				obj.back()->SetLocation(Vector2D(pos.x,pos.y - flag_pos));
+				obj.back()->SetType(bakuha_count);
+				bakuha_flg = false;
+				bakuha_count--;
+			}
+			else
+			{
+				if (obj.back()->GetObjectType() == E_BAKUHA)
+				{
+					obj.back()->Update(diff);
+				}
+				else return E_TITLE;
 
-	//			if (obj.back()->GetObjectType() == E_BAKUHA && obj.back()->GetEndFlg())
-	//			{
-	//				delete obj.back();
-	//				obj.pop_back();
-	//			}
-	//		}
-	//	}
+				if (obj.back()->GetObjectType() == E_BAKUHA && obj.back()->GetEndFlg())
+				{
+					delete obj.back();
+					obj.pop_back();
+				}
+			}
+		}
 
-	//	goal_flg = true;
+		goal_flg = true;
 
-	//	return GetNowScene();
-	//}
+		return GetNowScene();
+	}
 
 	//end_flgがtureになっているもの終了時処理を呼ぶ
 	for (int i = 0; i < obj.size(); i++)
 	{
+		if (obj[i]->GetLocation().x > 680.0f)break;
 		if (obj[i]->GetEndFlg())
 		{
 			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetPreset() == 2)
@@ -164,8 +165,10 @@ eSceneType GameMainScene::Update()
 	//当たり判定チェック
 	for (int i = 0; i < obj.size(); i++)
 	{
+		if (obj[i]->GetLocation().x > 680.0f)break;
 		for (int j = 0; j < obj.size(); j++)
 		{
+			if (obj[i]->GetLocation().x > 680.0f)break;
 			if (i != j)
 			{
 				if (IsHitCheck(obj[i], obj[j]))
@@ -192,8 +195,6 @@ eSceneType GameMainScene::Update()
 	//オブジェクトの更新処理
 	for (int i = 0; i < obj.size(); i++)
 	{
-		//if (obj[i]->GetLocation().x > 800.0f)break;
-
 		//PLAYERがアニメーション中の時処理
 		if (obj[0]->GetState() == false)
 		{
@@ -206,7 +207,11 @@ eSceneType GameMainScene::Update()
 	}
 
 	//playerとのズレの合計
-	diff += fabsf(obj[0]->GetOffSet().x);
+	//PLAYERがアニメーション中の時処理
+	if (obj[0]->GetState() == true)
+	{
+		diff += fabsf(obj[0]->GetOffSet().x);
+	}
 	//1Fごとのズレ
 	diff_location = obj[0]->GetOffSet();
 	
@@ -219,13 +224,12 @@ void GameMainScene::Draw() const
 	DrawGraph(-diff % 1504, 0, background_img, FALSE);
 	DrawGraph(-diff % 1504 + 1504, 0, background_img, FALSE);
 	DrawRotaGraph(pos.x - diff, pos.y - flag_pos, 1.0f, 0.0, siro_img[1], TRUE);
-	//DrawRotaGraph(pos.x - diff, pos.y,1.0f,0.0, siro_img[0], TRUE);
+	DrawRotaGraph(pos.x - diff, pos.y,1.0f,0.0, siro_img[0], TRUE);
 	
 	for (int i = 1; i < obj.size(); i++)
 	{
-		//if (obj[i]->GetLocation().x > 800.0f)break;
+		if (obj[i]->GetLocation().x > 680.0f)break;
 		obj[i]->Draw();
-	
 	}
 	//Playerの描画を最後に
 	obj[0]->Draw();
