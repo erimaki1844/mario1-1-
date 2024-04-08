@@ -222,7 +222,7 @@ void GameMainScene::Draw() const
 	DrawGraph(-diff % 1504, 0, background_img, FALSE);
 	DrawGraph(-diff % 1504 + 1504, 0, background_img, FALSE);
 	DrawRotaGraph(pos.x - diff, pos.y - flag_pos, 1.0f, 0.0, siro_img[1], TRUE);
-	DrawRotaGraph(pos.x - diff, pos.y,1.0f,0.0, siro_img[0], TRUE);
+	//DrawRotaGraph(pos.x - diff, pos.y,1.0f,0.0, siro_img[0], TRUE);
 	
 	for (int i = 1; i < 100; i++)
 	{
