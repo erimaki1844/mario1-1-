@@ -25,6 +25,7 @@ enum ePlayerAnim
 class Player : public ObjectBase
 {
 private:
+	int bgm;
 	int count;
 	int flash_count;
 	int anim_count2;

@@ -32,6 +32,15 @@ void Enemy::Update(Vector2D diff)
 	//Playerとのズレを加算する
 	location.x -= diff.x;
 
+	// 画面外に完全に出たら終了する
+	if (enemy_type == E_KOOPTROOPA_HIDE)
+	{
+		if (location.x > 680.0f)
+		{
+			end_flg = true;
+		}
+	}
+
 	//画面内に入ってから動くようにする
 	if (location.x > 680.0f)
 	{
@@ -42,7 +51,6 @@ void Enemy::Update(Vector2D diff)
 	location += overlap;
 	overlap = Vector2D(0.0f);
 
-	//画面外に完全に出た終了する
 	if (location.x < -64.0f)
 	{
 		end_flg = true;
@@ -60,13 +68,7 @@ void Enemy::Update(Vector2D diff)
 			}
 			return;
 		}
-		//重力
-		if (g_speed > -12.0f)
-		{
-			//重力
-			g_speed -= GRAVITY;
-		}
-		location.y += g_speed;
+		Movement();
 		return;
 	}
 
@@ -155,7 +157,7 @@ void Enemy::OnHit(ObjectBase* obj)
 		if (enemy_type == E_KOOPTROOPA_HIDE)
 		{
 			ChangeAnim(E_IDOL_ENEMY);
-			speed = 10.0f;
+			speed = 5.0f;
 			if (obj->GetLocation().x > location.x)direction = E_RIGHT;
 			if (obj->GetLocation().x < location.x)direction = E_LEFT;
 		}
@@ -233,26 +235,25 @@ void Enemy::OnHit(ObjectBase* obj)
 				direction = E_RIGHT;
 			}
 		}
+	}
 
-		//if (fabsf(diff_location.x) > fabsf(diff_location.y) && g_speed >= 0.0f)
-		//{
-		//	if (diff_location.x > 0)overlap.x = blocking.x, direction = E_LEFT;
-		//	else if (diff_location.x < 0)overlap.x = -blocking.x, direction = E_RIGHT;
-		//}
-		//else
-		//{
-		//	//下側にいる時
-		//	if (diff_location.y > 0)
-		//	{
-		//		overlap.y = blocking.y;
-		//	}
-		//	//上側にいる時
-		//	else if (diff_location.y < 0 && g_speed < 0.0f)
-		//	{
-		//		g_speed = 0.0f;
-		//		overlap.y = -blocking.y;
-		//	}
-		//}
+	//ノコノコの甲羅に当たった時
+	if (obj->GetObjectType() == E_ENEMY)
+	{
+		//ENEMYがアクティブな状態か？
+		if (is_active == false)
+		{
+			return;
+		}
+
+		if (obj->GetPreset() == 2)
+		{
+			is_active = false;
+			g_speed = 10.0f;
+			speed = -5.0f;
+			angle = 3.0f;
+			return;
+		}
 	}
 }
 

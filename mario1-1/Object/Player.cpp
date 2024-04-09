@@ -45,6 +45,13 @@ void Player::Initialize()
 	{
 		ChangeVolumeSoundMem(100, this->se[i]);
 	}
+
+	//BGM‚Ì“Ç‚Ýž‚Ý
+	bgm = LoadSoundMem("Resource/sound/BGM_MarioGround.wav");
+
+	ChangeVolumeSoundMem(80, bgm);
+
+	PlaySoundMem(bgm, DX_PLAYTYPE_LOOP, TRUE);
 }
 
 void Player::Update(Vector2D diff)
@@ -126,7 +133,7 @@ void Player::Draw()
 			{
 				DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[0], TRUE, direction);
 			}
-			if (now_anim == E_RUN)
+			if (now_anim == E_RUN || now_anim == E_GOAL)
 			{
 				DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
 			}
@@ -371,7 +378,7 @@ void Player::OnHit(ObjectBase* obj)
 		{
 			//“¥‚Ý‚Â‚¯‚Ä‚¢‚½‚ç­‚µ’µ‚Ë‚é
 			jump_power = 10.0f;
-			speed = 3.0f;
+			//speed = 3.0f;
 			PlaySoundMem(se[5], DX_PLAYTYPE_BACK, TRUE);
 		}
 		else if (obj->GetIsActive() == true)
@@ -388,6 +395,7 @@ void Player::OnHit(ObjectBase* obj)
 				jump_power = 10.0f;
 				is_active = false;
 				state = false;
+				StopSoundMem(bgm);
 				ChangeAnim(E_GAMEOVER);
 			}
 			if (player_type == SUPER)
@@ -467,6 +475,7 @@ void Player::OnHit(ObjectBase* obj)
 		state = false;
 		anim = 8;
 		now_anim = E_CLING;
+		StopSoundMem(bgm);
 		PlaySoundMem(se[8], DX_PLAYTYPE_BACK, TRUE);
 	}
 }

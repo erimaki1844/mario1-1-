@@ -117,7 +117,7 @@ void Block::SetType(int handle)
 
 void Block::OnHit(ObjectBase* obj)
 {
-	if (block_type == E_NOMAL)
+	if (block_type == E_NOMAL || block_type == E_FLOORBLOCK)
 	{
 		return;
 	}

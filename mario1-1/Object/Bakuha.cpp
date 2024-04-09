@@ -15,6 +15,7 @@ void Bakuha::Initialize()
 	anim = 0;
 	anim_count = 0;
 	bakuha_type = 0;
+	state = false;
 	end_flg = false;
 	is_active = false;
 	obj_type = E_BAKUHA;

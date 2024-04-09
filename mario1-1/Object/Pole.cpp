@@ -28,10 +28,7 @@ void Pole::Initialize()
 void Pole::Update(Vector2D diff)
 {
 	//Player‚Æ‚ÌƒYƒŒ‚ð‰ÁŽZ‚·‚é
-	if (is_active == false)
-	{
-		location.x -= diff.x;
-	}
+	location.x -= diff.x;
 
 	//‰æ–Ê“à‚É“ü‚Á‚Ä‚©‚ç“®‚­‚æ‚¤‚É‚·‚é
 	if (location.x > 800.0f)

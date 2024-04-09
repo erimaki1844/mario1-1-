@@ -40,11 +40,6 @@ void GameMainScene::Initialize()
 	siro_img[1] = LoadGraph("Resource/1-1image/flag_siro.png");
 	se[1] = LoadSoundMem("Resource/sound/SE_Goal.wav");
 
-	//SEの読み込み
-	bgm = LoadSoundMem("Resource/sound/BGM_MarioGround.wav");
-
-	ChangeVolumeSoundMem(80, bgm);
-
 	obj.push_back(new Player);
 	
 	LoadStageCSV();
@@ -54,8 +49,6 @@ void GameMainScene::Initialize()
 		obj[i]->Initialize();
 	}
 	
-	//obj[4]->SetLocation(Vector2D(600.0f, 388.0f));
-	PlaySoundMem(bgm, DX_PLAYTYPE_LOOP, TRUE);
 }
 
 eSceneType GameMainScene::Update()
@@ -102,7 +95,7 @@ eSceneType GameMainScene::Update()
 				//ステージクリア後の爆発を生成する
 				obj.push_back(new Bakuha);
 				obj.back()->Initialize();
-				obj.back()->SetLocation(Vector2D(pos.x,pos.y - flag_pos));
+				obj.back()->SetLocation(Vector2D(pos.x - diff,pos.y - flag_pos));
 				obj.back()->SetType(bakuha_count);
 				bakuha_flg = false;
 				bakuha_count--;
@@ -131,6 +124,14 @@ eSceneType GameMainScene::Update()
 	//end_flgがtureになっているもの終了時処理を呼ぶ
 	for (int i = 0; i < obj.size(); i++)
 	{
+		if (obj[i]->GetObjectType() == E_ENEMY)
+		{
+			if (obj[i]->GetPreset() == 2 && obj[i]->GetLocation().x > 680.0f)
+			{
+				obj[i]->Finalize();
+				obj.erase(obj.begin() + i);
+			}
+		}
 		if (obj[i]->GetLocation().x > 680.0f)break;
 		if (obj[i]->GetEndFlg())
 		{
@@ -198,7 +199,7 @@ eSceneType GameMainScene::Update()
 		//PLAYERがアニメーション中の時処理
 		if (obj[0]->GetState() == false)
 		{
-			if (obj[i]->GetObjectType() == E_POLE || obj[i]->GetObjectType() == E_PLAYER)
+			if (obj[i]->GetObjectType() == E_POLE || obj[i]->GetObjectType() == E_PLAYER || obj[i]->GetObjectType() == E_BLOCK)
 			{
 				obj[i]->Update(diff_location);
 			}
@@ -207,11 +208,7 @@ eSceneType GameMainScene::Update()
 	}
 
 	//playerとのズレの合計
-	//PLAYERがアニメーション中の時処理
-	if (obj[0]->GetState() == true)
-	{
-		diff += fabsf(obj[0]->GetOffSet().x);
-	}
+	diff += fabsf(obj[0]->GetOffSet().x);
 	//1Fごとのズレ
 	diff_location = obj[0]->GetOffSet();
 	
@@ -230,6 +227,10 @@ void GameMainScene::Draw() const
 	{
 		if (obj[i]->GetLocation().x > 680.0f)break;
 		obj[i]->Draw();
+		if (i > 113)
+		{
+			obj[i]->Draw();
+		}
 	}
 	//Playerの描画を最後に
 	obj[0]->Draw();
