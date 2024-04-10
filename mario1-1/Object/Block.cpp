@@ -123,6 +123,9 @@ void Block::OnHit(ObjectBase* obj)
 	}
 	if (obj->GetObjectType() == E_PLAYER)
 	{
+		//プレイヤーの状態をチェックする
+		if (obj->GetState() == false) return;
+
 		//Playerが下側から当たった時の処理
 		if (obj->GetLocation().y - obj->GetSize().y < location.y + box_size.y && obj->GetLocation().y - obj->GetSize().y > location.y)
 		{

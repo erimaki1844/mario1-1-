@@ -148,6 +148,10 @@ eSceneType GameMainScene::Update()
 
 				score += obj[i]->GetScore();
 			}
+			if (obj[i]->GetObjectType() == E_ENEMY && obj[i]->GetIsActive() == false)
+			{
+				score += obj[i]->GetScore();
+			}
 			if (obj[i]->GetObjectType() == E_PLAYER)
 			{
 				if (life == 0)

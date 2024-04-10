@@ -302,13 +302,14 @@ void Enemy::ChangeType(eEnemyType type)
 	}
 	if (type == E_KOOPTROOPA)
 	{
-		score = 200;
+		score = 100;
 		enemy_type = type;
 		box_size = Vector2D(16.0f, 32.0f);
 		LoadDivGraph("Resource/1-1image/Enemy/nokonoko.png", 2, 2, 1, 32, 64, image);
 	}
 	if (type == E_KOOPTROOPA_HIDE)
 	{
+		score = 400;
 		enemy_type = type;
 		box_size = Vector2D(16.0f, 16.0f);
 		LoadDivGraph("Resource/1-1image/Enemy/nokonoko_revival.png", 2, 2, 1, 32, 32, image);

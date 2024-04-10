@@ -398,7 +398,7 @@ void Player::OnHit(ObjectBase* obj)
 				StopSoundMem(bgm);
 				ChangeAnim(E_GAMEOVER);
 			}
-			//スーパーマリオの時にエネミーと当たっていたらゲームオーバー
+			//スーパーマリオの時にエネミーと当たっていたらミニマリオに戻る
 			if (player_type == SUPER)
 			{
 				anim = 0;
