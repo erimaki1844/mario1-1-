@@ -186,7 +186,7 @@ void Player::Draw()
 	}
 
 	//点滅時の画像表示処理
-	if (player_type == FLASH)
+	if (player_type == POWER_DOWN)
 	{
 		if (anim_count2 > 5)
 		{
@@ -403,7 +403,7 @@ void Player::OnHit(ObjectBase* obj)
 				anim = 0;
 				is_active = false;
 				state = false;
-				ChangeType(FLASH);
+				ChangeType(POWER_DOWN);
 				PlaySoundMem(se[1], DX_PLAYTYPE_BACK, TRUE);
 			}
 		}
@@ -461,6 +461,9 @@ void Player::OnHit(ObjectBase* obj)
 			if (obj->GetPreset() == 1 && player_type != SUPER)
 			{
 				ChangeType(POWER_UP);
+				anim = 0;
+				anim_count2 = 0;
+				flash_count = 0;
 				state = false;
 				is_active = false;
 				PlaySoundMem(se[4], DX_PLAYTYPE_BACK, TRUE);
@@ -612,12 +615,12 @@ void Player::ChangeAnim(ePlayerAnim anim)
 void Player::ChangeType(ePlayerType type)
 {
 
-	if (player_type != NOMAL && type != FLASH)
+	if (player_type != NOMAL && type != POWER_DOWN)
 	{
 		//位置ズレを直す
 		location.y += 16.0f;
 	}
-	if (player_type != SUPER && type != FLASH)
+	if (player_type != SUPER && type != POWER_DOWN)
 	{
 		//位置ズレを直す
 		location.y -= 16.0f;
@@ -635,7 +638,7 @@ void Player::ChangeType(ePlayerType type)
 		this->box_size = Vector2D(16.0f, 16.0f);
 		LoadDivGraph("Resource/1-1image/Mario/mario.png", 9, 9, 1, 32, 32, image);
 	}
-	if (type == FLASH)
+	if (type == POWER_DOWN)
 	{
 		LoadDivGraph("Resource/1-1image/Mario/dekamarimation.png", 3, 3, 1, 32, 64, image);
 	}

@@ -5,7 +5,7 @@ enum ePlayerType
 {
 	SUPER,
 	NOMAL,
-	FLASH,
+	POWER_DOWN,
 	POWER_UP
 };
 
