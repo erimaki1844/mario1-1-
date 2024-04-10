@@ -307,7 +307,7 @@ void Player::Movement()
 	}
 
 	//ジャンプ処理
-	if (E_JUMP != now_anim)
+	if (E_JUMP != now_anim && jump_power > -1.0f)
 	{
 		if (InputControl::GetButtonDown(XINPUT_BUTTON_A))
 		{
@@ -378,7 +378,6 @@ void Player::OnHit(ObjectBase* obj)
 		{
 			//踏みつけていたら少し跳ねる
 			jump_power = 10.0f;
-			//speed = 3.0f;
 			PlaySoundMem(se[5], DX_PLAYTYPE_BACK, TRUE);
 		}
 		else if (obj->GetIsActive() == true)
@@ -389,6 +388,7 @@ void Player::OnHit(ObjectBase* obj)
 				return;
 			}
 			else PlaySoundMem(se[6], DX_PLAYTYPE_BACK, TRUE);
+			//ミニマリオの時にエネミーと当たっていたらゲームオーバー
 			if (player_type == NOMAL)
 			{
 				anim = 0;
@@ -398,6 +398,7 @@ void Player::OnHit(ObjectBase* obj)
 				StopSoundMem(bgm);
 				ChangeAnim(E_GAMEOVER);
 			}
+			//スーパーマリオの時にエネミーと当たっていたらゲームオーバー
 			if (player_type == SUPER)
 			{
 				anim = 0;

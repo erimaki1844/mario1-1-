@@ -32,6 +32,7 @@ public:
 	virtual void Draw() override;
 	virtual int Finalize() override;
 	virtual void SetType(int handle) override;
+	virtual int GetPreset() override;
 	
 private:
 	virtual void OnHit(ObjectBase* obj) override;

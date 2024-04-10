@@ -22,6 +22,7 @@ void Enemy::Initialize()
 	now_anim = E_IDOL_ENEMY;
 	direction = E_RIGHT;
 	is_active = true;
+	state = false;
 	end_flg = false;
 
 	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
@@ -35,7 +36,7 @@ void Enemy::Update(Vector2D diff)
 	// 画面外に完全に出たら終了する
 	if (enemy_type == E_KOOPTROOPA_HIDE)
 	{
-		if (location.x > 680.0f)
+		if (location.x > 680.0f || location.y > 500.0f)
 		{
 			end_flg = true;
 		}
@@ -51,7 +52,8 @@ void Enemy::Update(Vector2D diff)
 	location += overlap;
 	overlap = Vector2D(0.0f);
 
-	if (location.x < -64.0f)
+	//画面外に出たら終了する
+	if (location.x < -64.0f || location.y > 500.0f)
 	{
 		end_flg = true;
 	}
@@ -154,10 +156,11 @@ void Enemy::OnHit(ObjectBase* obj)
 	if (obj->GetObjectType() == E_PLAYER && obj->GetIsActive() == true)
 	{
 		//ノコノコが甲羅に籠っている時に当たったら転がっていく
-		if (enemy_type == E_KOOPTROOPA_HIDE)
+		if (enemy_type == E_KOOPTROOPA_HIDE && state == false)
 		{
 			ChangeAnim(E_IDOL_ENEMY);
 			speed = 5.0f;
+			state = true;
 			if (obj->GetLocation().x > location.x)direction = E_RIGHT;
 			if (obj->GetLocation().x < location.x)direction = E_LEFT;
 		}
@@ -246,7 +249,7 @@ void Enemy::OnHit(ObjectBase* obj)
 			return;
 		}
 
-		if (obj->GetPreset() == 2)
+		if (obj->GetPreset() == 2 && obj->GetState())
 		{
 			is_active = false;
 			g_speed = 10.0f;

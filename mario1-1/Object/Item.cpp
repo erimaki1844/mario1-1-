@@ -49,8 +49,8 @@ void Item::Update(Vector2D diff)
 		return;
 	}
 
-	//画面外に完全に出た終了する
-	if (location.x < -64.0f)
+	//画面外に出たら終了する
+	if (location.x < -64.0f || location.y > 500.0f)
 	{
 		end_flg = true;
 	}
@@ -66,6 +66,7 @@ void Item::Update(Vector2D diff)
 		return;
 	}
 
+	//アイテムがブロックがら出てくる処理
 	if (state == true)
 	{
 	
@@ -92,7 +93,7 @@ void Item::Update(Vector2D diff)
 
 void Item::Draw()
 {
-	if (state == true || is_active == true)
+	if (display_flg == false)
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
 	}
@@ -131,7 +132,6 @@ void Item::Movement()
 		}
 		else
 		{
-			is_active = false;
 			display_flg = true;
 			anim_count = 0;
 		}
@@ -188,7 +188,7 @@ void Item::OnHit(ObjectBase* obj)
 	if (obj->GetObjectType() == E_BLOCK)
 	{
 		//Playerがブロックに下側から当たったらアイテムが出てくる
-		if (obj->GetIsActive() && is_active != true)
+		if (obj->GetIsActive() && obj->GetPreset() == 1 && is_active != true)
 		{
 			if (item_type == E_COIN)
 			{

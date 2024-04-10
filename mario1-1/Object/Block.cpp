@@ -117,7 +117,7 @@ void Block::SetType(int handle)
 
 void Block::OnHit(ObjectBase* obj)
 {
-	if (block_type == E_NOMAL || block_type == E_FLOORBLOCK)
+	if (block_type == E_NOMAL || block_type == E_FLOORBLOCK || block_type == E_KAIBLOCK)
 	{
 		return;
 	}
@@ -223,4 +223,10 @@ void Block::BlockAnim()
 
 		move.y += g_speed;
 	}
+}
+
+int Block::GetPreset()
+{
+	int type = block_type;
+	return type;
 }

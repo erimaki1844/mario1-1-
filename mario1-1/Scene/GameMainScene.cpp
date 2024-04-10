@@ -135,13 +135,18 @@ eSceneType GameMainScene::Update()
 		if (obj[i]->GetLocation().x > 680.0f)break;
 		if (obj[i]->GetEndFlg())
 		{
-			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetPreset() == 2)
+			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetIsActive())
 			{
-				coin++;
-			}
-			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetPreset() == 0)
-			{
-				life++;
+				if (obj[i]->GetPreset() == 2 && obj[i]->GetIsActive())
+				{
+					coin++;
+				}
+				if (obj[i]->GetPreset() == 0 && obj[i]->GetIsActive())
+				{
+					life++;
+				}
+
+				score += obj[i]->GetScore();
 			}
 			if (obj[i]->GetObjectType() == E_PLAYER)
 			{
