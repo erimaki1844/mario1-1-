@@ -19,4 +19,7 @@ public:
 	virtual void Finalize() override;
 
 	virtual eSceneType GetNowScene() const override;
+
+private:
+	void LoadDataCSV();
 };

@@ -236,10 +236,6 @@ void GameMainScene::Draw() const
 	{
 		if (obj[i]->GetLocation().x > 680.0f)break;
 		obj[i]->Draw();
-		if (i > 113)
-		{
-			obj[i]->Draw();
-		}
 	}
 	//Player‚Ì•`‰æ‚ðÅŒã‚É
 	obj[0]->Draw();

@@ -1,5 +1,6 @@
 #include"LoadingScene.h"
 #include"../Object/Player.h"
+#include"../Utility/CSVHandle.h"
 
 LoadingScene::LoadingScene() : count(0)
 {
@@ -46,4 +47,21 @@ void LoadingScene::Finalize()
 eSceneType LoadingScene::GetNowScene() const
 {
 	return eSceneType::E_LOADING;
+}
+
+void LoadingScene::LoadDataCSV()
+{
+	FILE* fp = nullptr;
+
+	errno_t result = fopen_s(&fp, "Resource/dat/data.csv", "r");
+
+	if (result != 0)
+	{
+		throw("CSVファイルが開けませんでした\n");
+	}
+
+	// CSVFile<型名> data;
+	CSVFile<int> data;
+	// data.csv_read(入力ファイル名, ヘッダーの有無, インデックスの有無, 区切り文字);
+	data.csv_read("Resource/dat/data.csv", false, true, ',');
 }

@@ -44,7 +44,7 @@ void Item::Update(Vector2D diff)
 	location.x -= diff.x;
 
 	//画面内に入ってから動くようにする
-	if (location.x > 800.0f)
+	if (location.x > 650.0f)
 	{
 		return;
 	}
@@ -188,7 +188,7 @@ void Item::OnHit(ObjectBase* obj)
 	if (obj->GetObjectType() == E_BLOCK)
 	{
 		//Playerがブロックに下側から当たったらアイテムが出てくる
-		if (obj->GetIsActive() && obj->GetPreset() == 1 && is_active != true)
+		if (obj->GetPreset() == 1 && is_active != true)
 		{
 			if (item_type == E_COIN)
 			{

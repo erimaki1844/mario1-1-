@@ -43,7 +43,7 @@ void Enemy::Update(Vector2D diff)
 	}
 
 	//‰æ–Ê“à‚É“ü‚Á‚Ä‚©‚ç“®‚­‚æ‚¤‚É‚·‚é
-	if (location.x > 680.0f)
+	if (location.x > 650.0f)
 	{
 		return;
 	}

@@ -27,7 +27,7 @@ void ClayPipe::Update(Vector2D diff)
 	location.x -= diff.x;
 
 	//‰æ–Ê“à‚É“ü‚Á‚Ä‚©‚ç“®‚­‚æ‚¤‚É‚·‚é
-	if (location.x > 800.0f)
+	if (location.x > 650.0f)
 	{
 		return;
 	}

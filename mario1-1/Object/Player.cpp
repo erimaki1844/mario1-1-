@@ -60,6 +60,7 @@ void Player::Update(Vector2D diff)
 	if (location.y > 500.0f)
 	{
 		end_flg = true;
+		StopSoundMem(bgm);
 		return;
 	}
 
@@ -199,6 +200,10 @@ void Player::Draw()
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
 	}
+
+	//Debug用
+	DrawFormatString(0, 200, 0xFFFFFF, "%f", location.x);
+	DrawFormatString(0, 240, 0xFFFFFF, "%f", location.y);
 }
 
 int Player::Finalize()
@@ -216,7 +221,7 @@ void Player::Movement()
 	move = Vector2D(0.0f);
 
 	//左移動処理
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT) && now_anim != E_JUMP)
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT) && now_anim != E_JUMP && jump_power > 0.0f)
 	{
 		//ブレーキ処理
 		if (direction == E_RIGHT && speed > 0.0f)
@@ -224,7 +229,6 @@ void Player::Movement()
 			ChangeAnim(E_BRAKE);
 			speed -= MAX_SPEED / 20;
 			move += Vector2D(speed, 0.0f);
-			//location.x += speed;
 		}
 		else
 		{
@@ -251,7 +255,7 @@ void Player::Movement()
 		}
 	}
 	//右移動処理
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT) && now_anim != E_JUMP)
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT) && now_anim != E_JUMP && jump_power > 0.0f)
 	{
 		//ブレーキ処理
 		if (direction == E_LEFT && speed > 0.0f)
@@ -259,7 +263,6 @@ void Player::Movement()
 			ChangeAnim(E_BRAKE);
 			speed -= MAX_SPEED / 20;
 			move += Vector2D(-speed, 0.0f);
-			//location.x -= speed;
 		}
 		else
 		{
@@ -301,7 +304,7 @@ void Player::Movement()
 	}
 
 	//重力
-	if (jump_power > -12.0f)
+	if (jump_power > -10.0f)
 	{
 		jump_power -= GRAVITY;
 	}
@@ -311,7 +314,7 @@ void Player::Movement()
 	{
 		if (InputControl::GetButtonDown(XINPUT_BUTTON_A))
 		{
-			jump_power = 10.0f;
+			jump_power = 7.0f;
 			ChangeAnim(E_JUMP);
 			if (speed >= MAX_SPEED)
 			{
@@ -359,8 +362,8 @@ void Player::Movement()
 void Player::OnHit(ObjectBase* obj)
 {
 	//再生中のSEをとめる
-	StopSoundMem(se[2]);
-	StopSoundMem(se[3]);
+	/*StopSoundMem(se[2]);
+	StopSoundMem(se[3]);*/
 
 	//ENEMYの場合
 	if (obj->GetObjectType() == E_ENEMY && is_active == true)
@@ -435,19 +438,25 @@ void Player::OnHit(ObjectBase* obj)
 		blocking.x = box_ex.x - fabsf(diff_location.x);
 		blocking.y = box_ex.y - fabsf(diff_location.y);
 
-		if (fabsf(diff_location.x) > fabsf(diff_location.y))
+
+		//重なっている部分が大きい方を押し出す
+		if (blocking.x < blocking.y)
 		{
-			if (diff_location.x > 0)overlap.x = blocking.x;
-			else if (diff_location.x < 0)overlap.x = -blocking.x;
+			//右側に押し出す
+			if (diff_location.x > 0)overlap.x = blocking.x + move.x;
+			//左側に押し出す
+			else if (diff_location.x < 0)overlap.x = -blocking.x - move.x;
 		}
 		else
 		{
+			//下側に押し出す
 			if (diff_location.y > 0)
 			{
 				overlap.y = blocking.y;
-				jump_power -= 5.0f;
+				jump_power -= 3.0f;
 			}
-			else if (diff_location.y < 0 && jump_power < 0.0f)
+			//上側に押し出す
+			else if (diff_location.y < 0 && jump_power < 0.0f && location.y < 416)
 			{
 				ChangeAnim(E_IDOL);
 				overlap.y = -blocking.y;
@@ -606,7 +615,7 @@ void Player::ChangeAnim(ePlayerAnim anim)
 	if (anim == E_IDOL)
 	{
 		count = 0;
-		jump_power = 0;
+		jump_power = GRAVITY;
 	}
 
 	if (now_anim != E_GAMEOVER && now_anim != E_GOAL)now_anim = anim;
