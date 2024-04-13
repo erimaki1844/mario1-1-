@@ -254,6 +254,26 @@ void GameMainScene::Finalize()
 			life++;
 		}
 	}
+
+	FILE* fp = nullptr;
+
+	errno_t result = fopen_s(&fp, "Resource/dat/data.csv", "w");
+
+	if (result != 0)
+	{
+		throw("CSVファイルが開けませんでした\n");
+	}
+
+	char name[3][10] = { { 'l','i','f','e' },{ 's','c','o','r','e'},{'c','o','i','n'}};
+	int data[3] = { life,score,coin };
+
+	for (int  i = 0; i < 3; i++)
+	{
+		fprintf(fp, "%s,%d\n", name[i], data[i]);
+	}
+	
+	//ファイルクローズ
+	fclose(fp);
 }
  
 eSceneType GameMainScene::GetNowScene() const

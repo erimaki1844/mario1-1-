@@ -1,10 +1,12 @@
 #include"LoadingScene.h"
 #include"../Object/Player.h"
-#include"../Utility/CSVHandle.h"
 
 LoadingScene::LoadingScene() : count(0)
 {
-
+	for (int i = 0; i < 3; i++)
+	{
+		mario_data[i] = NULL;
+	}
 }
 
 LoadingScene::~LoadingScene()
@@ -14,6 +16,8 @@ LoadingScene::~LoadingScene()
 
 void LoadingScene::Initialize()
 {
+	LoadDataCSV();
+
 	LoadDivGraph("Resource/1-1image/Mario/mario.png", 9, 9, 1, 32, 32, image);
 	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
 }
@@ -36,7 +40,7 @@ void LoadingScene::Draw() const
 	DrawString(0, 0, "LoadingScene", 0xFFFFFF);
 	DrawRotaGraph(288, 240, 1.0, 0.0, image[0], TRUE);
 	DrawRotaGraph(320.0f, 240.0f, 1.0f, 0.0f, num_img[11], TRUE);
-	DrawRotaGraph(352.0f, 240.0f, 1.0f, 0.0f, num_img[3], TRUE);
+	DrawRotaGraph(352.0f, 240.0f, 1.0f, 0.0f, num_img[mario_data[0]], TRUE);
 }
 
 void LoadingScene::Finalize()
@@ -60,8 +64,48 @@ void LoadingScene::LoadDataCSV()
 		throw("CSVファイルが開けませんでした\n");
 	}
 
-	// CSVFile<型名> data;
-	CSVFile<int> data;
-	// data.csv_read(入力ファイル名, ヘッダーの有無, インデックスの有無, 区切り文字);
-	data.csv_read("Resource/dat/data.csv", false, true, ',');
+	char buf[512];
+	char life[10] = {};
+	char score[20] = {};
+	char coin[10] = {};
+	int ret;
+
+	while (fgets(buf, 512, fp) != NULL)
+	{
+		//lifeの値を読み込む
+		if (buf[0] == 'l')
+		{
+			ret = sscanf(buf, "%s", life);
+
+			for (int i = 0; i < 10; i++)
+			{
+				if (life[i] >= '0' && life[i] <= '9') 
+				{
+					mario_data[0] = life[i] - '0';
+				}
+			}
+		}
+		//スコアの値を読み込む
+		else if (buf[0] == 's')
+		{
+			ret = sscanf(buf, "%s", score);
+
+			for (int i = 0; i < 10; i++)
+			{
+				if (score[i] >= '0' && score[i] <= '9')
+				{
+					if (mario_data[1] >= 1)
+					{
+						mario_data[1] = mario_data[1] * 10 + (score[i] - '0');
+					}
+					else mario_data[1] = score[i] - '0';
+				}
+			}
+
+			this->score = mario_data[1];
+		}
+	}
+
+	//ファイルクローズ
+	fclose(fp);
 }

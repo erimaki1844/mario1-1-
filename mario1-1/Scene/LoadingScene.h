@@ -8,6 +8,7 @@ private:
 	int life;
 	int image[10];
 	int num_img[15];
+	int mario_data[3];
 
 public:
 	LoadingScene();

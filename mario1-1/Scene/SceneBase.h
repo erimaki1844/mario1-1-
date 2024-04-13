@@ -1,7 +1,12 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include"DxLib.h"
 #include"../Object/ObjectBase.h"
 #include<vector>
+#include <iostream>
+#include <fstream>
+#include<stdio.h>
+#include<string.h>
 
 //ƒV[ƒ“î•ñ
 enum eSceneType
