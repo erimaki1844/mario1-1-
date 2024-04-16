@@ -5,7 +5,6 @@ class LoadingScene :public SceneBase
 {
 private:
 	int count;
-	int life;
 	int image[10];
 	int num_img[15];
 	int mario_data[3];
@@ -20,7 +19,4 @@ public:
 	virtual void Finalize() override;
 
 	virtual eSceneType GetNowScene() const override;
-
-private:
-	void LoadDataCSV();
 };

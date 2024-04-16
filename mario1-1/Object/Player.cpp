@@ -4,7 +4,7 @@
 
 #define MAX_SPEED 3.0f
 
-Player::Player() : jump_power(0.0f), speed(0.0f), count(0),start_pos(0.0f), flash_count(0), anim_count2(0)
+Player::Player() : jump_power(0.0f), speed(0.0f), count(0), start_pos(0.0f), flash_count(0), anim_count2(0)
 {
 
 }
@@ -24,7 +24,7 @@ void Player::Initialize()
 	anim = 1;
 	anim_count = 0;
 	this->obj_type = E_PLAYER;
-	ChangeType(SUPER);
+	ChangeType(NOMAL);
 	is_active = true;
 	state = true;
 	end_flg = false;
@@ -41,7 +41,7 @@ void Player::Initialize()
 	se[8] = LoadSoundMem("Resource/sound/SE_PoleTouch.wav");
 	se[9] = LoadSoundMem("Resource/sound/SE_Goal.wav");
 
-	for (int i = 0; i < 10; i++) 
+	for (int i = 0; i < 10; i++)
 	{
 		ChangeVolumeSoundMem(100, this->se[i]);
 	}
@@ -204,6 +204,9 @@ void Player::Draw()
 	//Debug用
 	DrawFormatString(0, 200, 0xFFFFFF, "%f", location.x);
 	DrawFormatString(0, 240, 0xFFFFFF, "%f", location.y);
+	DrawFormatString(0, 260, 0xFFFFFF, "%f", move.x);
+	DrawFormatString(0, 280, 0xFFFFFF, "%f", speed);
+	DrawFormatString(0, 300, 0xFFFFFF, "%d", direction);
 }
 
 int Player::Finalize()
@@ -227,8 +230,7 @@ void Player::Movement()
 		if (direction == E_RIGHT && speed > 0.0f)
 		{
 			ChangeAnim(E_BRAKE);
-			speed -= MAX_SPEED / 20;
-			move += Vector2D(speed, 0.0f);
+			speed -= MAX_SPEED / 10;
 		}
 		else
 		{
@@ -261,8 +263,7 @@ void Player::Movement()
 		if (direction == E_LEFT && speed > 0.0f)
 		{
 			ChangeAnim(E_BRAKE);
-			speed -= MAX_SPEED / 20;
-			move += Vector2D(-speed, 0.0f);
+			speed -= MAX_SPEED / 10;
 		}
 		else
 		{
@@ -314,7 +315,7 @@ void Player::Movement()
 	{
 		if (InputControl::GetButtonDown(XINPUT_BUTTON_A))
 		{
-			jump_power = 7.0f;
+			jump_power = 8.0f;
 			ChangeAnim(E_JUMP);
 			if (speed >= MAX_SPEED)
 			{
@@ -328,6 +329,7 @@ void Player::Movement()
 	}
 	else
 	{
+		//押した長さでジャンプできる距離が変わる
 		if (InputControl::GetButton(XINPUT_BUTTON_A))
 		{
 			count++;
@@ -347,24 +349,25 @@ void Player::Movement()
 
 	move.y -= jump_power;
 
+	//慣性で滑る表現をするための処理
 	if (direction == E_LEFT)move += Vector2D(-speed, 0.0f);
 	if (direction == E_RIGHT)move += Vector2D(speed, 0.0f);
 
 	location += move;
 
-	if (location.x - box_size.x < 0 || location.x + box_size.x > 390)
+	if (location.x - box_size.x < 0)
 	{
-		location.x -= move.x;
+		location.x = box_size.x;
+	}
+	else if (location.x + box_size.x > 390) 
+	{
+		location.x = 390 - box_size.x;
 	}
 }
 
 //ヒット時処理
 void Player::OnHit(ObjectBase* obj)
 {
-	//再生中のSEをとめる
-	/*StopSoundMem(se[2]);
-	StopSoundMem(se[3]);*/
-
 	//ENEMYの場合
 	if (obj->GetObjectType() == E_ENEMY && is_active == true)
 	{
@@ -377,7 +380,7 @@ void Player::OnHit(ObjectBase* obj)
 			return;
 		}
 		//マリオが敵の頭上にいるか判定する
-		if (location.y < obj->GetLocation().y && jump_power < 0.0f)
+		if (location.y < obj->GetLocation().y && jump_power < 0.0f && obj->GetPreset() != 2)
 		{
 			//踏みつけていたら少し跳ねる
 			jump_power = 10.0f;
@@ -385,11 +388,13 @@ void Player::OnHit(ObjectBase* obj)
 		}
 		else if (obj->GetIsActive() == true)
 		{
-			if (obj->GetPreset() == 2)
+			//甲羅を蹴った時のSE
+			if (obj->GetPreset() == 2 && obj->GetState() == false)
 			{
 				PlaySoundMem(se[7], DX_PLAYTYPE_BACK, TRUE);
 				return;
 			}
+			//ENEMYにヒットした時のSE
 			else PlaySoundMem(se[6], DX_PLAYTYPE_BACK, TRUE);
 			//ミニマリオの時にエネミーと当たっていたらゲームオーバー
 			if (player_type == NOMAL)
@@ -407,6 +412,7 @@ void Player::OnHit(ObjectBase* obj)
 				anim = 0;
 				is_active = false;
 				state = false;
+				flash_count = 0;
 				ChangeType(POWER_DOWN);
 				PlaySoundMem(se[1], DX_PLAYTYPE_BACK, TRUE);
 			}
@@ -442,10 +448,22 @@ void Player::OnHit(ObjectBase* obj)
 		//重なっている部分が大きい方を押し出す
 		if (blocking.x < blocking.y)
 		{
+			float temp = blocking.x + (move.x / 2);
+
 			//右側に押し出す
-			if (diff_location.x > 0)overlap.x = blocking.x + move.x;
+			if (diff_location.x > 0)
+			{
+				if (overlap.x < temp) {
+					overlap.x = temp - speed;
+				}
+			}
 			//左側に押し出す
-			else if (diff_location.x < 0)overlap.x = -blocking.x - move.x;
+			else if (diff_location.x < 0)
+			{
+				if ((-temp) < overlap.x) {
+					overlap.x = -temp + speed * 2;
+				}
+			}
 		}
 		else
 		{
@@ -480,7 +498,6 @@ void Player::OnHit(ObjectBase* obj)
 			}
 		}
 	}
-
 	//Poleの場合
 	if (obj->GetObjectType() == E_POLE && now_anim != E_CLING && obj->GetIsActive() != false)
 	{

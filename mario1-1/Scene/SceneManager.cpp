@@ -43,7 +43,7 @@ void SceneManager::Initialize()
 	}
 
 	//タイトルシーンから始める
-	ChangeScene(eSceneType::E_LOADING);
+	ChangeScene(eSceneType::E_MAIN);
 
 	//UIを生成する
 	ui = new UI;

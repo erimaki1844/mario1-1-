@@ -11,7 +11,6 @@ private:
 	int siro_img[2];
 	int bakuha_count;
 	int se[2];
-	int diff; //”wŒi‚Ìplayer‚Æ‚ÌƒYƒŒ
 	int fps;
 	bool goal_flg;
 	bool bakuha_flg;

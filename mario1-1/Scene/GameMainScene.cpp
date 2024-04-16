@@ -20,18 +20,14 @@ GameMainScene::~GameMainScene()
 
 void GameMainScene::Initialize()
 {
-	//今だけここで初期化している、後でLoadingSceneで初期化する
-	score = 0;
-	coin = 0;
-	life = 3;
+	LoadDataCSV();
 	time = 400;
 
-	bakuha_count = 4;
+	bakuha_count = 0;
 	goal_flg = false;
 	bakuha_flg = false;
 	pos = Vector2D(0.0f);
 	flag_pos = 54.0f;
-	diff = 0.0f;
 	diff_location = Vector2D(0.0f);
 
 	//画像の読み込み
@@ -75,7 +71,7 @@ eSceneType GameMainScene::Update()
 	}
 
 	//ゴール処理
-	if (obj[0]->GetLocation().x > pos.x - diff)
+	if (obj[0]->GetLocation().x > pos.x - diff_location.x)
 	{
 		obj[0]->Finalize();
 		
@@ -95,7 +91,7 @@ eSceneType GameMainScene::Update()
 				//ステージクリア後の爆発を生成する
 				obj.push_back(new Bakuha);
 				obj.back()->Initialize();
-				obj.back()->SetLocation(Vector2D(pos.x - diff,pos.y - flag_pos));
+				obj.back()->SetLocation(Vector2D(pos.x - diff_location.x,pos.y - flag_pos));
 				obj.back()->SetType(bakuha_count);
 				bakuha_flg = false;
 				bakuha_count--;
@@ -104,9 +100,15 @@ eSceneType GameMainScene::Update()
 			{
 				if (obj.back()->GetObjectType() == E_BAKUHA)
 				{
-					obj.back()->Update(diff);
+					obj.back()->Update(diff_location.x);
 				}
-				else return E_TITLE;
+				else
+				{
+					score = 0;
+					coin = 0;
+					life = 3;
+					return E_TITLE;
+				}
 
 				if (obj.back()->GetObjectType() == E_BAKUHA && obj.back()->GetEndFlg())
 				{
@@ -154,8 +156,11 @@ eSceneType GameMainScene::Update()
 			}
 			if (obj[i]->GetObjectType() == E_PLAYER)
 			{
-				if (life == 0)
+				if (life == 1)
 				{
+					score = 0;
+					coin = 0;
+					life = 3;
 					return E_END;
 				}
 				else
@@ -183,18 +188,30 @@ eSceneType GameMainScene::Update()
 			{
 				if (IsHitCheck(obj[i], obj[j]))
 				{
-					obj[i]->OnHit(obj[j]);
-					obj[j]->OnHit(obj[i]);
-
-					if (obj[i]->GetEndFlg())
+					//PLAYERの処理を最優先にする
+					if (obj[i]->GetObjectType() == E_PLAYER)
 					{
-						//score += obj[i]->GetScore();
+						obj[0]->OnHit(obj[j]);
+						obj[j]->OnHit(obj[i]);
 					}
+					else if (obj[j]->GetObjectType() == E_PLAYER)
+					{
+						obj[i]->OnHit(obj[j]);
+					}
+					else
+					{
+						obj[i]->OnHit(obj[j]);
+						obj[j]->OnHit(obj[i]);
+					}
+					//ゴールした時の処理
 					if (obj[i]->GetObjectType() == E_PLAYER)
 					{
 						if (obj[j]->GetObjectType() == E_POLE && obj[j]->GetEndFlg() == false)
 						{
 							score += obj[j]->GetScore();
+							if (time % 10 == 1)bakuha_count = 1;
+							if (time % 10 == 3)bakuha_count = 2;
+							if (time % 10 == 6)bakuha_count = 3;
 						}
 					}
 				}
@@ -210,16 +227,14 @@ eSceneType GameMainScene::Update()
 		{
 			if (obj[i]->GetObjectType() == E_POLE || obj[i]->GetObjectType() == E_PLAYER || obj[i]->GetObjectType() == E_BLOCK)
 			{
-				obj[i]->Update(diff_location);
+				obj[i]->Update(obj[0]->GetOffSet());
 			}
 		}
-		else obj[i]->Update(diff_location);
+		else obj[i]->Update(obj[0]->GetOffSet());
 	}
 
 	//playerとのズレの合計
-	diff += fabsf(obj[0]->GetOffSet().x);
-	//1Fごとのズレ
-	diff_location = obj[0]->GetOffSet();
+	diff_location += obj[0]->GetOffSet().x;
 	
 	//現在のシーンタイプを返す
 	return GetNowScene();
@@ -227,10 +242,13 @@ eSceneType GameMainScene::Update()
 
 void GameMainScene::Draw() const
 {
-	DrawGraph(-diff % 1504, 0, background_img, FALSE);
-	DrawGraph(-diff % 1504 + 1504, 0, background_img, FALSE);
-	DrawRotaGraph(pos.x - diff, pos.y - flag_pos, 1.0f, 0.0, siro_img[1], TRUE);
-	DrawRotaGraph(pos.x - diff, pos.y,1.0f,0.0, siro_img[0], TRUE);
+	DrawGraph(-diff_location.x, 0, background_img, FALSE);
+	DrawGraph(-diff_location.x + 1504, 0, background_img, FALSE);
+	DrawGraph(-diff_location.x + 1504 * 2, 0, background_img, FALSE);
+	DrawGraph(-diff_location.x + 1504 * 3, 0, background_img, FALSE);
+	DrawGraph(-diff_location.x + 1504 * 4, 0, background_img, FALSE);
+	DrawRotaGraph(pos.x - diff_location.x, pos.y - flag_pos, 1.0f, 0.0, siro_img[1], TRUE);
+	DrawRotaGraph(pos.x - diff_location.x, pos.y,1.0f,0.0, siro_img[0], TRUE);
 	
 	for (int i = 1; i < obj.size(); i++)
 	{

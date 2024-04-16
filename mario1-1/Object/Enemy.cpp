@@ -1,6 +1,7 @@
 #include"Enemy.h"
 #include"../Utility/UI.h"
 #include<cmath>
+#define MAX_SPEED 5.0f
 
 Enemy::Enemy() : speed(0.0f),g_speed(0.0f)
 {
@@ -43,7 +44,7 @@ void Enemy::Update(Vector2D diff)
 	}
 
 	//‰æ–Ê“à‚É“ü‚Á‚Ä‚©‚ç“®‚­‚æ‚¤‚É‚·‚é
-	if (location.x > 650.0f)
+	if (location.x > 650.0f && enemy_type != E_KOOPTROOPA_HIDE)
 	{
 		return;
 	}
@@ -100,6 +101,8 @@ void Enemy::Update(Vector2D diff)
 		anim++;
 		if (anim == 2) anim = 0;
 	}
+
+	if (speed >= MAX_SPEED )state = true;
 
 	anim_count++;
 
@@ -159,8 +162,7 @@ void Enemy::OnHit(ObjectBase* obj)
 		if (enemy_type == E_KOOPTROOPA_HIDE && state == false)
 		{
 			ChangeAnim(E_IDOL_ENEMY);
-			speed = 5.0f;
-			state = true;
+			speed = 4.0f;
 			if (obj->GetLocation().x > location.x)direction = E_RIGHT;
 			if (obj->GetLocation().x < location.x)direction = E_LEFT;
 		}
@@ -267,6 +269,8 @@ void Enemy::Movement()
 
 	if (now_anim == E_IDOL_ENEMY)
 	{
+		if (enemy_type == E_KOOPTROOPA_HIDE && MAX_SPEED != speed)speed++;
+
 		//¶ˆÚ“®ˆ—
 		if (direction == E_LEFT)
 		{

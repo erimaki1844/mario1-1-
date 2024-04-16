@@ -246,6 +246,11 @@ void Item::OnHit(ObjectBase* obj)
 			}
 		}
 	}
+
+	if (obj->GetObjectType() == E_CLAYPIPE)
+	{
+		direction = E_RIGHT;
+	}
 }
 
 void Item::SetType(int handle)
