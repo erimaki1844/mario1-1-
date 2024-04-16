@@ -339,6 +339,7 @@ void Player::Movement()
 				if (speed >= MAX_SPEED)
 				{
 					g_speed += 1.0f;
+					speed = 4.0f;
 				}
 				else
 				{
@@ -390,11 +391,7 @@ void Player::OnHit(ObjectBase* obj)
 		else if (obj->GetIsActive() == true)
 		{
 			//甲羅を蹴った時のSE
-			if (obj->GetPreset() == 2 && obj->GetState() == false)
-			{
-				PlaySoundMem(se[7], DX_PLAYTYPE_BACK, TRUE);
-				return;
-			}
+			if (obj->GetPreset() == 2 && obj->GetState() == false)return;
 			//ENEMYにヒットした時のSE
 			else PlaySoundMem(se[6], DX_PLAYTYPE_BACK, TRUE);
 			//ミニマリオの時にエネミーと当たっていたらゲームオーバー

@@ -27,8 +27,9 @@ void Block::Initialize()
 	//SEÇÃì«Ç›çûÇ›
 	se[0] = LoadSoundMem("Resource/sound/SE_Block.wav");
 	se[1] = LoadSoundMem("Resource/sound/SE_BlockBreak.wav");
+	se[2] = LoadSoundMem("Resource/sound/SE_ItemAppearance.wav");
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		ChangeVolumeSoundMem(100, this->se[i]);
 	}
@@ -155,6 +156,7 @@ void Block::OnHit(ObjectBase* obj)
 			if (block_type == E_HIDEBLOCK)
 			{
 				SetType(1);
+				PlaySoundMem(se[2], DX_PLAYTYPE_BACK, TRUE);
 			}
 		}
 	}
@@ -221,8 +223,6 @@ void Block::BlockAnim()
 			g_speed -= GRAVITY / 5;
 		}
 		else end_flg = true;
-
-		//location += move;
 	}
 }
 

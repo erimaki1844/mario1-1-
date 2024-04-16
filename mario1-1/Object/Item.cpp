@@ -20,6 +20,7 @@ void Item::Initialize()
 	box_size = Vector2D(16.0f, 16.0f);
 	obj_type = E_ITEM;
 	direction = E_LEFT;
+	state = false;
 	is_active = false;
 	end_flg = false;
 	display_flg = false;
@@ -33,7 +34,7 @@ void Item::Initialize()
 	se[1] = LoadSoundMem("Resource/sound/SE_1Up.wav");
 	se[2] = LoadSoundMem("Resource/sound/SE_CoinPickUp.wav");
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		ChangeVolumeSoundMem(100, this->se[i]);
 	}
@@ -177,11 +178,15 @@ void Item::OnHit(ObjectBase* obj)
 	//PLAYER�̏ꍇ
 	if (obj->GetObjectType() == E_PLAYER)
 	{
-		if (is_active == true)
+		if (is_active == true && item_type != E_COIN)
 		{
 			anim_count = 0;
 			is_active = false;
 			display_flg = true;
+			if (item_type == E_1UP)
+			{
+				PlaySoundMem(se[1], DX_PLAYTYPE_BACK, TRUE);
+			}
 		}
 	}
 
@@ -197,7 +202,7 @@ void Item::OnHit(ObjectBase* obj)
 				is_active = true;
 				PlaySoundMem(se[2], DX_PLAYTYPE_BACK, TRUE);
 			}
-			else
+			else if (state == false)
 			{
 				state = true;
 				PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);

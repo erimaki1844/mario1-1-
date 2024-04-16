@@ -28,6 +28,10 @@ void Enemy::Initialize()
 	end_flg = false;
 
 	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
+
+	se[0] = LoadSoundMem("Resource/sound/SE_Kick.wav");
+
+	ChangeVolumeSoundMem(100, se[0]);
 }
 
 void Enemy::Update(Vector2D diff)
@@ -166,6 +170,7 @@ void Enemy::OnHit(ObjectBase* obj)
 			speed = 4.0f;
 			if (obj->GetLocation().x > location.x)direction = E_RIGHT;
 			if (obj->GetLocation().x < location.x)direction = E_LEFT;
+			PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);
 		}
 
 		//ENEMYがアクティブな状態か？
@@ -209,6 +214,7 @@ void Enemy::OnHit(ObjectBase* obj)
 			g_speed = 10.0f;
 			speed = -5.0f;
 			angle = 3.0f;
+			PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);
 			return;
 		}
 		//ブロッキング処理
@@ -258,6 +264,7 @@ void Enemy::OnHit(ObjectBase* obj)
 			g_speed = 10.0f;
 			speed = -5.0f;
 			angle = 3.0f;
+			PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);
 			return;
 		}
 	}
