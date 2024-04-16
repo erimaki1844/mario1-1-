@@ -18,7 +18,6 @@ class Block : public ObjectBase
 {
 private:
 	float pos;
-	float g_speed;
 	bool block_state;
 	bool anim_flg;
 	Vector2D move;

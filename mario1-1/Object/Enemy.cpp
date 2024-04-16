@@ -3,7 +3,7 @@
 #include<cmath>
 #define MAX_SPEED 5.0f
 
-Enemy::Enemy() : speed(0.0f),g_speed(0.0f)
+Enemy::Enemy() : speed(0.0f)
 {
 
 }
@@ -19,6 +19,7 @@ void Enemy::Initialize()
 	anim_count = 0;
 	count = 0;
 	angle = 0.0f;
+	g_speed = 0.0f;
 	obj_type = E_ENEMY;
 	now_anim = E_IDOL_ENEMY;
 	direction = E_RIGHT;
@@ -205,8 +206,8 @@ void Enemy::OnHit(ObjectBase* obj)
 		if (obj->GetIsActive())
 		{
 			is_active = false;
-			location.x -= 20.0f;
-			location.y -= 20.0f;
+			g_speed = 10.0f;
+			speed = -5.0f;
 			angle = 3.0f;
 			return;
 		}

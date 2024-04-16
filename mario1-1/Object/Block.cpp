@@ -56,7 +56,6 @@ void Block::Update(Vector2D diff)
 
 void Block::Draw()
 {
-
 	if (block_type == E_BRICKBREAK)
 	{
 		DrawRotaGraph(location.x + move.x, location.y - move.y, 1.0f, 0.0f, this->image[anim], TRUE, E_RIGHT);
@@ -65,7 +64,6 @@ void Block::Draw()
 		DrawRotaGraph(location.x - move.x - 0.25f, location.y - move.y /2, 1.0f, 0.0f, this->image[anim], TRUE, E_LEFT);
 	}
 	else DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim],FALSE);
-	
 }
 
 int Block::Finalize()
@@ -117,7 +115,7 @@ void Block::SetType(int handle)
 
 void Block::OnHit(ObjectBase* obj)
 {
-	if (block_type == E_NOMAL || block_type == E_FLOORBLOCK || block_type == E_KAIBLOCK)
+	if (block_type == E_NOMAL || block_type == E_FLOORBLOCK || block_type == E_KAIBLOCK || block_type == E_BRICKBREAK)
 	{
 		return;
 	}
@@ -127,7 +125,7 @@ void Block::OnHit(ObjectBase* obj)
 		if (obj->GetState() == false) return;
 
 		//Playerが下側から当たった時の処理
-		if (obj->GetLocation().y - obj->GetSize().y < location.y + box_size.y && obj->GetLocation().y - obj->GetSize().y > location.y)
+		if (obj->GetG_SPEED() > 1.0f && obj->GetLocation().y > location.y)
 		{
 			if (state == false)
 			{
@@ -184,7 +182,7 @@ void Block::BlockAnim()
 	}
 
 	//プレイヤーがブロックに当たった時のアニメーション
-	if (state == true)
+	if (state == true && block_type != E_BRICKBREAK)
 	{
 		//移動量
 		move = Vector2D(0.0f);
@@ -216,7 +214,7 @@ void Block::BlockAnim()
 	if (block_type == E_BRICKBREAK)
 	{
 		move.x += 1.0f;
-
+		move.y += g_speed;
 		//重力
 		if (g_speed > 0.0f)
 		{
@@ -224,7 +222,7 @@ void Block::BlockAnim()
 		}
 		else end_flg = true;
 
-		move.y += g_speed;
+		//location += move;
 	}
 }
 

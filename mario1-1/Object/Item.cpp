@@ -2,7 +2,7 @@
 #include"../Utility/UI.h"
 #include<cmath>
 
-Item::Item() : g_speed(0.0f)
+Item::Item()
 {
 
 }
@@ -16,6 +16,7 @@ void Item::Initialize()
 {
 	anim = 0;
 	anim_count=0;
+	g_speed = 0.0f;
 	box_size = Vector2D(16.0f, 16.0f);
 	obj_type = E_ITEM;
 	direction = E_LEFT;

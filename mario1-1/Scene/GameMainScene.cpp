@@ -345,14 +345,28 @@ void GameMainScene::LoadStageCSV()
 			//アイテム読み込み
 			if (data.cell.at(j).at(i) / 10 == 1)
 			{
-				map_chip.x = (i * 32) - 16;
-				map_chip.y = (j * 32) - 16;
-				obj.push_back(new Item);
-				obj.back()->SetLocation(map_chip);
-				obj.back()->SetType(data.cell.at(j).at(i) - 10);
-				obj.push_back(new Block);
-				obj.back()->SetLocation(map_chip);
-				obj.back()->SetType(3);
+				if (data.cell.at(j).at(i) == 10)
+				{
+					map_chip.x = (i * 32) - 16;
+					map_chip.y = (j * 32) - 16;
+					obj.push_back(new Item);
+					obj.back()->SetLocation(map_chip);
+					obj.back()->SetType(data.cell.at(j).at(i) - 10);
+					obj.push_back(new Block);
+					obj.back()->SetLocation(map_chip);
+					obj.back()->SetType(4);
+				}
+				else
+				{
+					map_chip.x = (i * 32) - 16;
+					map_chip.y = (j * 32) - 16;
+					obj.push_back(new Item);
+					obj.back()->SetLocation(map_chip);
+					obj.back()->SetType(data.cell.at(j).at(i) - 10);
+					obj.push_back(new Block);
+					obj.back()->SetLocation(map_chip);
+					obj.back()->SetType(3);
+				}
 			}
 			//エネミー読み込み
 			if (data.cell.at(j).at(i) / 10 == 2)

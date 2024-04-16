@@ -4,7 +4,7 @@
 
 #define MAX_SPEED 3.0f
 
-Player::Player() : jump_power(0.0f), speed(0.0f), count(0), start_pos(0.0f), flash_count(0), anim_count2(0)
+Player::Player() :speed(0.0f), count(0), start_pos(0.0f), flash_count(0), anim_count2(0)
 {
 
 }
@@ -21,6 +21,7 @@ void Player::Initialize()
 	this->location = Vector2D(30.0f, 100.0f);
 	overlap = Vector2D(0.0f);
 	this->angle = 0.0f;
+	g_speed = 0.0f;
 	anim = 1;
 	anim_count = 0;
 	this->obj_type = E_PLAYER;
@@ -224,7 +225,7 @@ void Player::Movement()
 	move = Vector2D(0.0f);
 
 	//左移動処理
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT) && now_anim != E_JUMP && jump_power > 0.0f)
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT) && now_anim != E_JUMP && g_speed > 0.0f)
 	{
 		//ブレーキ処理
 		if (direction == E_RIGHT && speed > 0.0f)
@@ -257,7 +258,7 @@ void Player::Movement()
 		}
 	}
 	//右移動処理
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT) && now_anim != E_JUMP && jump_power > 0.0f)
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT) && now_anim != E_JUMP && g_speed > 0.0f)
 	{
 		//ブレーキ処理
 		if (direction == E_LEFT && speed > 0.0f)
@@ -305,17 +306,17 @@ void Player::Movement()
 	}
 
 	//重力
-	if (jump_power > -10.0f)
+	if (g_speed > -10.0f)
 	{
-		jump_power -= GRAVITY;
+		g_speed -= GRAVITY;
 	}
 
 	//ジャンプ処理
-	if (E_JUMP != now_anim && jump_power > -1.0f)
+	if (E_JUMP != now_anim && g_speed > -1.0f)
 	{
 		if (InputControl::GetButtonDown(XINPUT_BUTTON_A))
 		{
-			jump_power = 8.0f;
+			g_speed = 8.0f;
 			ChangeAnim(E_JUMP);
 			if (speed >= MAX_SPEED)
 			{
@@ -337,17 +338,17 @@ void Player::Movement()
 			{
 				if (speed >= MAX_SPEED)
 				{
-					jump_power += 1.0f;
+					g_speed += 1.0f;
 				}
 				else
 				{
-					jump_power += 0.8f;
+					g_speed += 0.8f;
 				}
 			}
 		}
 	}
 
-	move.y -= jump_power;
+	move.y -= g_speed;
 
 	//慣性で滑る表現をするための処理
 	if (direction == E_LEFT)move += Vector2D(-speed, 0.0f);
@@ -380,10 +381,10 @@ void Player::OnHit(ObjectBase* obj)
 			return;
 		}
 		//マリオが敵の頭上にいるか判定する
-		if (location.y < obj->GetLocation().y && jump_power < 0.0f && obj->GetPreset() != 2)
+		if (location.y < obj->GetLocation().y && g_speed < 0.0f && obj->GetPreset() != 2)
 		{
 			//踏みつけていたら少し跳ねる
-			jump_power = 10.0f;
+			g_speed = 10.0f;
 			PlaySoundMem(se[5], DX_PLAYTYPE_BACK, TRUE);
 		}
 		else if (obj->GetIsActive() == true)
@@ -400,7 +401,7 @@ void Player::OnHit(ObjectBase* obj)
 			if (player_type == NOMAL)
 			{
 				anim = 0;
-				jump_power = 10.0f;
+				g_speed = 10.0f;
 				is_active = false;
 				state = false;
 				StopSoundMem(bgm);
@@ -471,10 +472,10 @@ void Player::OnHit(ObjectBase* obj)
 			if (diff_location.y > 0)
 			{
 				overlap.y = blocking.y;
-				jump_power -= 3.0f;
+				g_speed -= 3.0f;
 			}
 			//上側に押し出す
-			else if (diff_location.y < 0 && jump_power < 0.0f && location.y < 416)
+			else if (diff_location.y < 0 && g_speed < 0.0f && location.y < 416)
 			{
 				ChangeAnim(E_IDOL);
 				overlap.y = -blocking.y;
@@ -482,7 +483,7 @@ void Player::OnHit(ObjectBase* obj)
 		}
 	}
 	//ITEMの場合
-	if (obj->GetObjectType() == E_ITEM)
+	if (obj->GetObjectType() == E_ITEM && obj->GetPreset() != 2)
 	{
 		if (obj->GetIsActive())
 		{
@@ -519,12 +520,12 @@ void Player::PlayerAnim()
 	if (now_anim == E_GOAL)
 	{
 		//重力
-		if (jump_power > -12.0f)
+		if (g_speed > -12.0f)
 		{
-			jump_power -= GRAVITY;
+			g_speed -= GRAVITY;
 		}
 		//着地していたら
-		if (jump_power <= 0)
+		if (g_speed <= 0)
 		{
 			if (anim_count > 5 - speed)
 			{
@@ -537,7 +538,7 @@ void Player::PlayerAnim()
 			anim_count++;
 		}
 		move.x += 3.0f;
-		move.y -= jump_power;
+		move.y -= g_speed;
 
 		location += move;
 	}
@@ -549,7 +550,7 @@ void Player::PlayerAnim()
 		if (direction == E_LEFT)
 		{
 			location.x += 10.0f;
-			jump_power = 10.0f;
+			g_speed = 10.0f;
 			direction = E_RIGHT;
 			anim = 5;
 			ChangeAnim(E_GOAL);
@@ -573,8 +574,8 @@ void Player::PlayerAnim()
 		if (anim_count2 > 50)
 		{
 			//重力
-			jump_power -= GRAVITY / 2;
-			location.y -= jump_power;
+			g_speed -= GRAVITY / 2;
+			location.y -= g_speed;
 		}
 		if (anim_count2 > 25 && anim_count2 < 27)
 		{
@@ -632,7 +633,7 @@ void Player::ChangeAnim(ePlayerAnim anim)
 	if (anim == E_IDOL)
 	{
 		count = 0;
-		jump_power = GRAVITY;
+		g_speed = GRAVITY;
 	}
 
 	if (now_anim != E_GAMEOVER && now_anim != E_GOAL)now_anim = anim;

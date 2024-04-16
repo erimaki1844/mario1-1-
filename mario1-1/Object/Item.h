@@ -17,7 +17,6 @@ enum eItemType
 class Item : public ObjectBase
 {
 private:
-	float g_speed;
 	float start_pos;
 	bool display_flg;
 	eItemType item_type;

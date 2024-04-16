@@ -18,7 +18,6 @@ class Enemy : public ObjectBase
 {
 private:
 	float speed;
-	float g_speed; //—Ž‰º‘¬“x
 	int count;
 	eEnemyType enemy_type;
 	eEnemyAnim now_anim;

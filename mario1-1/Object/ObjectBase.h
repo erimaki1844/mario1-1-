@@ -31,6 +31,7 @@ protected:
 	int num_img[15];
 	int score;
 	float angle;
+	float g_speed;
 	bool state;
 	bool is_active;
 	bool end_flg;
@@ -89,5 +90,9 @@ public:
 	int GetScore()
 	{
 		return this->score;
+	}
+	float GetG_SPEED()
+	{
+		return this->g_speed;
 	}
 };
