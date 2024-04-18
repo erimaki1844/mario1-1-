@@ -17,6 +17,7 @@ enum eItemType
 class Item : public ObjectBase
 {
 private:
+	int char_img[30];
 	float start_pos;
 	bool display_flg;
 	eItemType item_type;

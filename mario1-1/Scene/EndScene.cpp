@@ -1,4 +1,5 @@
 #include"EndScene.h"
+#include"../Utility/UI.h"
 
 EndScene::EndScene() : count(0)
 {
@@ -12,6 +13,10 @@ EndScene::~EndScene()
 
 void EndScene::Initialize()
 {
+	//ï∂éöÇÃì«Ç›çûÇ›
+	LoadDivGraph("Resource/1-1image/UI/string.png", 26, 26, 1, 16, 16, char_img);
+
+	//BGMì«Ç›çûÇ›
 	bgm = LoadSoundMem("Resource/sound/SE_GameOver.wav");
 	ChangeVolumeSoundMem(80, bgm);
 
@@ -33,7 +38,11 @@ eSceneType EndScene::Update()
 
 void EndScene::Draw() const
 {
-	DrawString(390, 210, "GAMEOVER", 0xFFFFFF);
+	char gameover[9] = { 'G','A','M','E','O','V','E','R'};
+	for (int i = 0; i < 9; i++) 
+	{
+		DrawRotaGraph(264 + 16 * i, 240, 1.0, 0.0, char_img[UI::STRConversion(gameover[i])], TRUE);
+	}
 }
 
 void EndScene::Finalize()

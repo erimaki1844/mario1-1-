@@ -21,4 +21,5 @@ public:
 	void Draw();
 	void Finalize();
 	static int Conversion(int score,int num);
+	static int STRConversion(char string);
 };

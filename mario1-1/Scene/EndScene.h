@@ -8,6 +8,7 @@ private:
 	int count;
 	int life;
 	int bgm;
+	int char_img[30];
 
 public:
 	EndScene();

@@ -28,6 +28,8 @@ void Item::Initialize()
 
 	//‰æ‘œ‚Ì“Ç‚İ‚İ
 	LoadDivGraph("Resource/1-1image/UI/num.png", 15, 15, 1, 16, 16, num_img);
+	//•¶š‚Ì“Ç‚İ‚İ
+	LoadDivGraph("Resource/1-1image/UI/string.png", 26, 26, 1, 16, 16, char_img);
 
 	//SE‚Ì“Ç‚İ‚İ
 	se[0] = LoadSoundMem("Resource/sound/SE_ItemAppearance.wav");
@@ -103,7 +105,12 @@ void Item::Draw()
 	{
 		if (item_type == E_1UP)
 		{
-
+			char up[2] = { 'U','P' };
+			DrawRotaGraph((location.x + 80.0f), location.y - 10.0f, 1.0f, 0.0f, num_img[1], TRUE);
+			for (int i = 0; i < 2; i++)
+			{
+				DrawRotaGraph((location.x + 96.0f) + 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, char_img[UI::STRConversion(up[i])], TRUE);
+			}
 		}
 		else
 		{

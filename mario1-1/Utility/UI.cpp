@@ -115,3 +115,20 @@ int UI::Conversion(int score,int num)
 
 	return handle;
 }
+
+int UI::STRConversion(char string)
+{
+	int num = 0;
+	char str[27] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M',
+		'N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
+
+	for (int i = 0; i < 27; i++)
+	{
+		if (string == str[i])
+		{
+			num = i;
+
+			return num;
+		}
+	}
+}

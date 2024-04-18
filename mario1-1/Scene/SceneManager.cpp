@@ -43,7 +43,7 @@ void SceneManager::Initialize()
 	}
 
 	//タイトルシーンから始める
-	ChangeScene(eSceneType::E_END);
+	ChangeScene(eSceneType::E_MAIN);
 
 	//UIを生成する
 	ui = new UI;
@@ -104,6 +104,27 @@ void SceneManager::Update()
 //シーンマネージャー機能：終了時処理
 void SceneManager::Finalize()
 {
+	//data.csvの初期化
+	FILE* fp = nullptr;
+
+	errno_t result = fopen_s(&fp, "Resource/dat/data.csv", "w");
+
+	if (result != 0)
+	{
+		throw("CSVファイルが開けませんでした\n");
+	}
+
+	char name[3][10] = { { 'l','i','f','e' },{ 's','c','o','r','e'},{'c','o','i','n'} };
+	int data[3] = { 3,0,0 };
+
+	for (int i = 0; i < 3; i++)
+	{
+		fprintf(fp, "%s,%d\n", name[i], data[i]);
+	}
+
+	//ファイルクローズ
+	fclose(fp);
+
 	//シーン情報の削除
 	if (current_scene != nullptr)
 	{

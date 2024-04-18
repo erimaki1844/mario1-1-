@@ -64,7 +64,14 @@ void Block::Draw()
 		DrawRotaGraph(location.x - move.x, location.y - move.y, 1.0f, 0.0f, this->image[anim], TRUE, E_LEFT);
 		DrawRotaGraph(location.x - move.x - 0.25f, location.y - move.y /2, 1.0f, 0.0f, this->image[anim], TRUE, E_LEFT);
 	}
-	else DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim],FALSE);
+	else if(block_type==E_HIDEBLOCK)
+	{
+		if (state == true)
+		{
+			DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], FALSE);
+		}
+	}
+	else DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], FALSE);
 }
 
 int Block::Finalize()
