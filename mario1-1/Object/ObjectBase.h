@@ -32,8 +32,8 @@ protected:
 	int score;
 	float angle;
 	float g_speed;
-	bool state;
-	bool is_active;
+	bool state;  //obj‚Ì“®‚«‚ª‚ ‚éó‘Ô
+	bool is_active; //“–‚½‚è”»’è‚ª‚Â‚¢‚Ä‚éó‘Ô
 	bool end_flg;
 	int anim_count;
 	int anim;

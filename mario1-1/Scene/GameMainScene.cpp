@@ -84,7 +84,7 @@ eSceneType GameMainScene::Update()
 
 		if (flag_pos >= 96.0f)
 		{
-			if (bakuha_count != 0) bakuha_flg = true;
+			if (bakuha_count < 0) bakuha_flg = true;
 
 			if (bakuha_flg == true)
 			{
@@ -350,7 +350,7 @@ void GameMainScene::LoadStageCSV()
 					map_chip.x = (i * 32) - 16;
 					map_chip.y = (j * 32) - 16;
 					obj.push_back(new Item);
-					obj.back()->SetLocation(map_chip);
+					obj.back()->SetLocation(Vector2D(map_chip.x, map_chip.y - 10.0f));
 					obj.back()->SetType(data.cell.at(j).at(i) - 10);
 					obj.push_back(new Block);
 					obj.back()->SetLocation(map_chip);
@@ -361,7 +361,7 @@ void GameMainScene::LoadStageCSV()
 					map_chip.x = (i * 32) - 16;
 					map_chip.y = (j * 32) - 16;
 					obj.push_back(new Item);
-					obj.back()->SetLocation(map_chip);
+					obj.back()->SetLocation(Vector2D(map_chip.x, map_chip.y - 10.0f));
 					obj.back()->SetType(data.cell.at(j).at(i) - 10);
 					obj.push_back(new Block);
 					obj.back()->SetLocation(map_chip);

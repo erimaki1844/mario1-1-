@@ -15,9 +15,8 @@ void Bakuha::Initialize()
 	anim = 0;
 	anim_count = 0;
 	bakuha_type = 0;
-	state = false;
 	end_flg = false;
-	is_active = false;
+	state = false;
 	obj_type = E_BAKUHA;
 
 	LoadDivGraph("Resource/1-1image/bakuha.png", 3, 3, 1, 32, 32, image);
@@ -71,10 +70,10 @@ void Bakuha::Update(Vector2D diff)
 	}
 
 
-	if (is_active == false)
+	if (state == false && bakuha_type != 0)
 	{
 		PlaySoundMem(se[0], DX_PLAYTYPE_BACK, TRUE);
-		is_active = true;
+		state = true;
 	}
 
 }

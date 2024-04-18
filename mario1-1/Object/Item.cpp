@@ -72,7 +72,7 @@ void Item::Update(Vector2D diff)
 	if (state == true)
 	{
 	
-		if (location.y + 32.0f > start_pos)
+		if (location.y + 22.0f > start_pos)
 		{
 			location.y -= 1.0f;
 		}
@@ -95,7 +95,7 @@ void Item::Update(Vector2D diff)
 
 void Item::Draw()
 {
-	if (display_flg == false)
+	if (state == true || is_active == true)
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
 	}
@@ -154,7 +154,7 @@ void Item::Movement()
 
 	if (is_active == true)
 	{
-		if (item_type == E_SUPER)
+		if (item_type == E_SUPER || item_type == E_1UP)
 		{
 			//¶ˆÚ“®ˆ—
 			if (direction == E_LEFT)
