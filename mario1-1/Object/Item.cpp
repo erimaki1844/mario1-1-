@@ -101,9 +101,16 @@ void Item::Draw()
 	}
 	if (display_flg == true)
 	{
-		for (int i = 0; i < 4; i++)
+		if (item_type == E_1UP)
 		{
-			DrawRotaGraph((location.x + 80.0f) - 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], TRUE);
+
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				DrawRotaGraph((location.x + 80.0f) - 16.0f * i, location.y - 10.0f, 1.0f, 0.0f, num_img[UI::Conversion(score, i)], TRUE);
+			}
 		}
 	}
 }

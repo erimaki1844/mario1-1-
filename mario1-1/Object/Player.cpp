@@ -237,7 +237,8 @@ void Player::Movement()
 		{
 			speed++;
 
-			if (InputControl::GetButton(XINPUT_BUTTON_B))
+			//ダッシュ
+			if (InputControl::GetButton(XINPUT_BUTTON_A))
 			{
 				if (MAX_SPEED <= speed)
 				{
@@ -271,7 +272,8 @@ void Player::Movement()
 
 			speed++;
 
-			if (InputControl::GetButton(XINPUT_BUTTON_B))
+			//ダッシュ
+			if (InputControl::GetButton(XINPUT_BUTTON_A))
 			{
 				if (MAX_SPEED <= speed)
 				{
@@ -314,7 +316,7 @@ void Player::Movement()
 	//ジャンプ処理
 	if (E_JUMP != now_anim && g_speed > -1.0f)
 	{
-		if (InputControl::GetButtonDown(XINPUT_BUTTON_A))
+		if (InputControl::GetButtonDown(XINPUT_BUTTON_B))
 		{
 			g_speed = 8.0f;
 			ChangeAnim(E_JUMP);
@@ -331,7 +333,7 @@ void Player::Movement()
 	else
 	{
 		//押した長さでジャンプできる距離が変わる
-		if (InputControl::GetButton(XINPUT_BUTTON_A))
+		if (InputControl::GetButton(XINPUT_BUTTON_B))
 		{
 			count++;
 			if (count < 15)

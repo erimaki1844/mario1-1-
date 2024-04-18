@@ -12,14 +12,17 @@ EndScene::~EndScene()
 
 void EndScene::Initialize()
 {
+	bgm = LoadSoundMem("Resource/sound/SE_GameOver.wav");
+	ChangeVolumeSoundMem(80, bgm);
 
+	PlaySoundMem(bgm, DX_PLAYTYPE_BACK, TRUE);
 }
 
 eSceneType EndScene::Update()
 {
 	count++;
 
-	if (count >= 300)
+	if (count >= 240)
 	{
 		return eSceneType::E_TITLE;
 	}

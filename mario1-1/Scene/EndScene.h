@@ -7,6 +7,7 @@ class EndScene :public SceneBase
 private:
 	int count;
 	int life;
+	int bgm;
 
 public:
 	EndScene();
