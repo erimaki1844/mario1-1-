@@ -37,6 +37,10 @@ void Bakuha::Update(Vector2D diff)
 
 		anim_count = 0;
 	}
+	else if (bakuha_type == 0)
+	{
+		if (anim_count > 20)end_flg = true;
+	}
 
 	anim_count++;
 
