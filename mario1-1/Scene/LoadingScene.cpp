@@ -37,7 +37,6 @@ eSceneType LoadingScene::Update()
 
 void LoadingScene::Draw() const
 {
-	DrawString(0, 0, "LoadingScene", 0xFFFFFF);
 	DrawRotaGraph(288, 240, 1.0, 0.0, image[0], TRUE);
 	DrawRotaGraph(320.0f, 240.0f, 1.0f, 0.0f, num_img[11], TRUE);
 	DrawRotaGraph(352.0f, 240.0f, 1.0f, 0.0f, num_img[life], TRUE);

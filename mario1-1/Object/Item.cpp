@@ -22,6 +22,7 @@ void Item::Initialize()
 	direction = E_LEFT;
 	state = false;
 	is_active = false;
+	hit_flg = false;
 	end_flg = false;
 	display_flg = false;
 	start_pos = location.y;
@@ -97,7 +98,14 @@ void Item::Update(Vector2D diff)
 
 void Item::Draw()
 {
-	if (state == true || is_active == true)
+	if (item_type == E_COIN)
+	{
+		if (display_flg == false && is_active == true)
+		{
+			DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
+		}
+	}
+	else if (state == true || is_active == true)
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, 0.0f, this->image[anim], TRUE);
 	}
@@ -196,6 +204,7 @@ void Item::OnHit(ObjectBase* obj)
 		{
 			anim_count = 0;
 			is_active = false;
+			hit_flg = true;
 			display_flg = true;
 			if (item_type == E_1UP)
 			{
@@ -214,6 +223,7 @@ void Item::OnHit(ObjectBase* obj)
 			{
 				g_speed = 10.0f;
 				is_active = true;
+				hit_flg = true;
 				PlaySoundMem(se[2], DX_PLAYTYPE_BACK, TRUE);
 			}
 			else if (state == false)

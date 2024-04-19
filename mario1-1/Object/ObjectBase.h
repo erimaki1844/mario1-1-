@@ -34,6 +34,7 @@ protected:
 	float g_speed;
 	bool state;  //obj‚Ì“®‚«‚ª‚ ‚éó‘Ô
 	bool is_active; //“–‚½‚è”»’è‚ª‚Â‚¢‚Ä‚éó‘Ô
+	bool hit_flg; //Player‚Æ“–‚½‚Á‚½‚©H
 	bool end_flg;
 	int anim_count;
 	int anim;
@@ -94,5 +95,9 @@ public:
 	float GetG_SPEED()
 	{
 		return this->g_speed;
+	}
+	bool GetHitFlg()
+	{
+		return this->hit_flg;
 	}
 };

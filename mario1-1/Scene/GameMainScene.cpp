@@ -84,7 +84,7 @@ eSceneType GameMainScene::Update()
 
 		if (flag_pos >= 96.0f)
 		{
-			if (bakuha_count < 0) bakuha_flg = true;
+			if (bakuha_count >= 0) bakuha_flg = true;
 
 			if (bakuha_flg == true)
 			{
@@ -137,13 +137,13 @@ eSceneType GameMainScene::Update()
 		if (obj[i]->GetLocation().x > 680.0f)break;
 		if (obj[i]->GetEndFlg())
 		{
-			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetIsActive())
+			if (obj[i]->GetObjectType() == E_ITEM && obj[i]->GetHitFlg())
 			{
 				if (obj[i]->GetPreset() == 2 && obj[i]->GetIsActive())
 				{
 					coin++;
 				}
-				if (obj[i]->GetPreset() == 0 && obj[i]->GetIsActive())
+				if (obj[i]->GetPreset() == 0 && obj[i]->GetHitFlg())
 				{
 					life++;
 				}
@@ -263,15 +263,6 @@ void GameMainScene::Finalize()
 {
 	StopSoundMem(bgm);
 
-	if (goal_flg == true)
-	{
-		score += coin * 100;
-		score += life * 1000;
-		if (coin == 13)
-		{
-			life++;
-		}
-	}
 
 	FILE* fp = nullptr;
 
