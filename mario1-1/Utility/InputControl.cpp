@@ -107,5 +107,5 @@ Vector2D InputControl::GetRightStick()
 //ボタン配列範囲チェック
 bool InputControl::CheckButtonRange(int button)
 {
-	return (0 <= button && button < 16);
+	return (0 <= button && button < D_BUTTON_MAX);
 }

@@ -126,4 +126,23 @@ public:
 		//ファイルクローズ
 		fclose(fp);
 	}
+
+	template <class T>
+	T* CreateObject(Vector2D& v)
+	{
+		T* instance = new T();
+		ObjectBase* obj = dynamic_cast<ObjectBase*>(instance);
+
+		if (obj == nullptr)
+		{
+			// エラー
+		}
+
+		obj->Initialize();
+		obj->SetLocation(v);
+
+		this->obj.push_back(obj);
+
+		return instance;
+	}
 };

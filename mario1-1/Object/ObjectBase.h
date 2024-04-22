@@ -24,7 +24,6 @@ enum eDirection
 class ObjectBase
 {
 protected:
-	Vector2D box_size;
 	Vector2D location;
 	int image[10];
 	int se[10];
@@ -39,6 +38,7 @@ protected:
 	int anim_count;
 	int anim;
 	Vector2D overlap;
+	Vector2D box_size;
 	eObjectType obj_type;
 	eObjectType hit_type{};
 	eDirection direction;
@@ -46,7 +46,7 @@ protected:
 public:
 	ObjectBase() {};
 	~ObjectBase() {};
-
+	// デザインパターン C++
 	virtual void Initialize() {};
 	virtual void Update(Vector2D diff) {};
 	virtual void Draw() {};

@@ -201,13 +201,6 @@ void Player::Draw()
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE, direction);
 	}
-
-	//Debug—p
-	DrawFormatString(0, 200, 0xFFFFFF, "%f", location.x);
-	DrawFormatString(0, 240, 0xFFFFFF, "%f", location.y);
-	DrawFormatString(0, 260, 0xFFFFFF, "%f", move.x);
-	DrawFormatString(0, 280, 0xFFFFFF, "%f", speed);
-	DrawFormatString(0, 300, 0xFFFFFF, "%d", direction);
 }
 
 int Player::Finalize()

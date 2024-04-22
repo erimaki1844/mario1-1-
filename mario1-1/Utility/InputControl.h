@@ -2,12 +2,14 @@
 
 #include "Vector2D.h"
 
+#define D_BUTTON_MAX	(16)	// ボタン最大数
+
 //入力管理機能
 class InputControl
 {
 private:
-	static bool now_button[16]; //現在フレーム入力値
-	static bool old_button[16]; //過去フレーム入力値
+	static bool now_button[D_BUTTON_MAX]; //現在フレーム入力値
+	static bool old_button[D_BUTTON_MAX]; //過去フレーム入力値
 	static float trigger[2]; //左右トリガー入力値
 	static Vector2D stick[2]; //左右スティック入力値
 

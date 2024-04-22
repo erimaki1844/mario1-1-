@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 //２次元ベクトルクラス
 class Vector2D
 {
@@ -61,7 +63,7 @@ public:
 	}
 	const Vector2D operator / (const float& scalar)
 	{
-		if (scalar < 1e-6f)
+		if (fabsf(scalar) < 1e-6f)
 		{
 			return Vector2D(0.0f);
 		}

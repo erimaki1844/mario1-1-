@@ -250,6 +250,7 @@ void GameMainScene::Draw() const
 	DrawRotaGraph(pos.x - diff_location.x, pos.y - flag_pos, 1.0f, 0.0, siro_img[1], TRUE);
 	DrawRotaGraph(pos.x - diff_location.x, pos.y,1.0f,0.0, siro_img[0], TRUE);
 	
+	//オブジェクトの描画処理
 	for (int i = 1; i < obj.size(); i++)
 	{
 		if (obj[i]->GetLocation().x > 680.0f)break;

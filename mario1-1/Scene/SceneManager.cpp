@@ -104,6 +104,14 @@ void SceneManager::Update()
 //シーンマネージャー機能：終了時処理
 void SceneManager::Finalize()
 {
+	//シーン情報の削除
+	if (current_scene != nullptr)
+	{
+		current_scene->Finalize();
+		delete current_scene;
+		current_scene = nullptr;
+	}
+
 	//data.csvの初期化
 	FILE* fp = nullptr;
 
@@ -124,14 +132,6 @@ void SceneManager::Finalize()
 
 	//ファイルクローズ
 	fclose(fp);
-
-	//シーン情報の削除
-	if (current_scene != nullptr)
-	{
-		current_scene->Finalize();
-		delete current_scene;
-		current_scene = nullptr;
-	}
 
 	//DXライブラリの使用を終了する
 	DxLib_End();

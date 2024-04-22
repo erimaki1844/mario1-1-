@@ -139,8 +139,6 @@ void Enemy::Draw()
 	{
 		DrawRotaGraph(location.x, location.y, 1.0f, angle, this->image[anim], TRUE);
 	}
-
-	DrawFormatString(0, 80, 0xFFFFFF, "%d", count);
 }
 
 int Enemy::Finalize()
