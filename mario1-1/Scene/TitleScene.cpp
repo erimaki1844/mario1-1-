@@ -61,7 +61,6 @@ eSceneType TitleScene::Update()
 void TitleScene::Draw() const
 {
 	DrawGraph(0, 0, menu_image, FALSE);
-	DrawFormatString(0, 20, 0xFFFFFF,"%d", menu_cursor);
 }
 
 //I—¹ˆ—

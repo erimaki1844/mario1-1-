@@ -18,7 +18,7 @@ void Player::Initialize()
 {
 	ChangeAnim(E_IDOL);
 	direction = E_RIGHT;
-	this->location = Vector2D(30.0f, 100.0f);
+	this->location = Vector2D(30.0f, 400.0f);
 	overlap = Vector2D(0.0f);
 	this->angle = 0.0f;
 	g_speed = 0.0f;
